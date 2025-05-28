@@ -6,7 +6,7 @@ use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 declare_id!("8D6DNFXjHFDG2Lgaw84uh111YxtYpJ3yaJJehRpbjt83");
 
 #[program]
-pub mod xyber_payment_processor {
+pub mod payment_processor {
     use super::*;
 
     /// One-time program initialization by the admin.

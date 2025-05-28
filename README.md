@@ -1,6 +1,6 @@
-# solana-finance
+# solana-payment-processor
 
-`solana-finance` is a Solana smart contract that facilitates token-based payments for agent-based services. It allows administrators to register operations with predefined costs and enables users to pay using a specified SPL token. This contract can be used to process prompt payments and associate them with unique identifiers for tracking and attribution.
+`solana-payment-processor` is a Solana smart contract that facilitates token-based payments for agent-based services. It allows administrators to register operations with predefined costs and enables users to pay using a specified SPL token. This contract can be used to process prompt payments and associate them with unique identifiers for tracking and attribution.
 
 ## 🔧 Commands
 
@@ -25,4 +25,4 @@ solana-keygen pubkey deploy-keypair.json
 
 ## 📬 Feedback
 
-We welcome issues, contributions, and feature suggestions. Let's build the future of identity together!
+We welcome issues, contributions, and feature suggestions. Let's build the future of web3 together!

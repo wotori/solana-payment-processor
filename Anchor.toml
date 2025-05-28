@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-solana_finance = "GC7VZh7jh34RZpqpHrsQ39g1Umh1XyWXX1sGidR7fp3K"
+payment_processor = "GC7VZh7jh34RZpqpHrsQ39g1Umh1XyWXX1sGidR7fp3K"
 
 [registry]
 url = "https://api.apr.dev"

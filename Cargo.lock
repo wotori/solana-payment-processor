@@ -989,6 +989,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "payment-processor"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+]
+
+[[package]]
 name = "pbkdf2"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1546,14 +1554,6 @@ dependencies = [
  "log",
  "serde",
  "serde_derive",
-]
-
-[[package]]
-name = "solana-finance"
-version = "0.1.0"
-dependencies = [
- "anchor-lang",
- "anchor-spl",
 ]
 
 [[package]]
