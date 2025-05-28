@@ -1,16 +1,226 @@
-use anchor_lang::prelude::*;
+#![allow(unexpected_cfgs)]
 
-declare_id!("GC7VZh7jh34RZpqpHrsQ39g1Umh1XyWXX1sGidR7fp3K");
+use anchor_lang::prelude::*;
+use anchor_spl::token::{self, Token, TokenAccount, Transfer};
+
+declare_id!("8D6DNFXjHFDG2Lgaw84uh111YxtYpJ3yaJJehRpbjt83");
 
 #[program]
-pub mod solana_finance {
+pub mod xyber_payment_processor {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("Greetings from: {:?}", ctx.program_id);
+    /// One-time program initialization by the admin.
+    ///
+    /// * `accepted_mint`  – SPL-Token mint that the program will accept as payment.
+    /// * `agent_wallet`   – Off-program wallet that ultimately receives the funds.
+    /// * `prompt_price`   – Reference price for a single prompt, expressed in the *accepted
+    ///                       mint’s smallest units (no oracle look-ups for now).
+    pub fn initialize(
+        ctx: Context<Initialize>,
+        accepted_mint: Pubkey,
+        agent_wallet: Pubkey,
+        prompt_price: u64,
+    ) -> Result<()> {
+        let cfg = &mut ctx.accounts.global_config;
+        cfg.admin = ctx.accounts.admin.key();
+        cfg.accepted_mint = accepted_mint;
+        cfg.agent_wallet = agent_wallet;
+        cfg.prompt_price = prompt_price;
+        cfg.bump = ctx.bumps.global_config;
+        Ok(())
+    }
+
+    /// Register or update an operation that users can purchase.
+    pub fn set_operation(
+        ctx: Context<SetOperation>,
+        payment_type: u64,
+        name: String,
+        payment_amount: u64,
+        agent_token: Pubkey,
+    ) -> Result<()> {
+        require!(name.len() <= 64, XyberError::NameTooLong);
+
+        let operation = &mut ctx.accounts.operation;
+        operation.payment_type = payment_type;
+        operation.name = name.clone();
+        operation.payment_amount = payment_amount;
+        operation.agent_token = agent_token;
+        operation.bump = ctx.bumps.operation;
+
+        emit!(OperationAdded {
+            name,
+            payment_amount,
+            agent_token,
+            caller: ctx.accounts.admin.key(),
+        });
+        Ok(())
+    }
+
+    /// Pay for a prompt (or any other registered operation).
+    pub fn pay(ctx: Context<Pay>, payment_type: u64, payment_id: [u8; 32]) -> Result<()> {
+        let op = &ctx.accounts.operation;
+        let cfg = &ctx.accounts.global_config;
+
+        require_keys_eq!(
+            ctx.accounts.user_payment_token.mint,
+            cfg.accepted_mint,
+            XyberError::UnsupportedMint
+        );
+        require_keys_eq!(
+            ctx.accounts.receiver_token.mint,
+            cfg.accepted_mint,
+            XyberError::UnsupportedMint
+        );
+
+        let amount = op.payment_amount;
+        let cpi_ctx = CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            Transfer {
+                from: ctx.accounts.user_payment_token.to_account_info(),
+                to: ctx.accounts.receiver_token.to_account_info(),
+                authority: ctx.accounts.payer.to_account_info(),
+            },
+        );
+        token::transfer(cpi_ctx, amount)?;
+
+        emit!(OperationPaid {
+            payment_type,
+            payment_mint: cfg.accepted_mint,
+            payment_id,
+            payment_amount: amount,
+            payer: ctx.accounts.payer.key(),
+        });
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct Initialize {}
+pub struct Initialize<'info> {
+    #[account(
+        init,
+        seeds = [b"global-config"],
+        bump,
+        payer = admin,
+        space = 8 + GlobalConfig::SIZE,
+    )]
+    pub global_config: Account<'info, GlobalConfig>,
+
+    /// CHECK: Stored as-is; validity is enforced off-chain.
+    pub agent_wallet: UncheckedAccount<'info>,
+
+    #[account(mut)]
+    pub admin: Signer<'info>,
+
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+#[instruction(payment_type: u64)]
+pub struct SetOperation<'info> {
+    #[account(
+        mut,
+        seeds = [b"global-config"],
+        bump = global_config.bump,
+        has_one = admin,
+    )]
+    pub global_config: Account<'info, GlobalConfig>,
+
+    #[account(
+        init_if_needed,
+        payer = admin,
+        seeds = [b"operation", payment_type.to_le_bytes().as_ref()],
+        bump,
+        space = 8 + Operation::SIZE,
+    )]
+    pub operation: Account<'info, Operation>,
+
+    #[account(mut)]
+    pub admin: Signer<'info>,
+
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+#[instruction(payment_type: u64)]
+pub struct Pay<'info> {
+    #[account(
+        seeds = [b"global-config"],
+        bump = global_config.bump,
+    )]
+    pub global_config: Account<'info, GlobalConfig>,
+
+    #[account(
+        seeds = [b"operation", payment_type.to_le_bytes().as_ref()],
+        bump = operation.bump,
+    )]
+    pub operation: Account<'info, Operation>,
+
+    #[account(
+        mut,
+        token::mint = global_config.accepted_mint,
+        token::authority = payer,
+    )]
+    pub user_payment_token: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        token::mint = global_config.accepted_mint,
+    )]
+    pub receiver_token: Account<'info, TokenAccount>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+
+    pub token_program: Program<'info, Token>,
+}
+
+#[account]
+pub struct GlobalConfig {
+    pub admin: Pubkey,
+    pub accepted_mint: Pubkey,
+    pub agent_wallet: Pubkey,
+    pub prompt_price: u64,
+    pub bump: u8,
+}
+
+impl GlobalConfig {
+    const SIZE: usize = 32 + 32 + 32 + 8 + 1;
+}
+
+#[account]
+pub struct Operation {
+    pub payment_type: u64,
+    pub name: String,
+    pub payment_amount: u64,
+    pub agent_token: Pubkey,
+    pub bump: u8,
+}
+
+impl Operation {
+    pub const SIZE: usize = 128;
+}
+
+#[event]
+pub struct OperationPaid {
+    pub payment_type: u64,
+    pub payment_mint: Pubkey,
+    pub payment_id: [u8; 32],
+    pub payment_amount: u64,
+    pub payer: Pubkey,
+}
+
+#[event]
+pub struct OperationAdded {
+    pub name: String,
+    pub payment_amount: u64,
+    pub agent_token: Pubkey,
+    pub caller: Pubkey,
+}
+
+#[error_code]
+pub enum XyberError {
+    #[msg("Unsupported payment token mint")]
+    UnsupportedMint,
+    #[msg("Operation name longer than 64 bytes")]
+    NameTooLong,
+}
