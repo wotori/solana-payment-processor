@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-payment_processor = "GC7VZh7jh34RZpqpHrsQ39g1Umh1XyWXX1sGidR7fp3K"
+payment_processor = "8D6DNFXjHFDG2Lgaw84uh111YxtYpJ3yaJJehRpbjt83"
 
 [registry]
 url = "https://api.apr.dev"
