@@ -1,7 +1,9 @@
 {
   "name": "@xyber-labs/payment-processor-sdk",
   "version": "0.1.0",
-  "main": "index.js",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": ["dist", "idl"],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
