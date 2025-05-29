@@ -1,0 +1,478 @@
+{
+    "address": "8D6DNFXjHFDG2Lgaw84uh111YxtYpJ3yaJJehRpbjt83",
+    "metadata": {
+        "name": "payment_processor",
+        "version": "0.1.0",
+        "spec": "0.1.0",
+        "description": "Created with Anchor"
+    },
+    "instructions": [
+        {
+            "name": "initialize",
+            "docs": [
+                "One-time program initialization by the admin.",
+                "",
+                "* `accepted_mint`  – SPL-Token mint that the program will accept as payment.",
+                "* `prompt_price`   – Reference price for a single prompt, expressed in the *accepted",
+                "mint’s smallest units (no oracle look-ups for now)."
+            ],
+            "discriminator": [
+                175,
+                175,
+                109,
+                31,
+                13,
+                152,
+                155,
+                237
+            ],
+            "accounts": [
+                {
+                    "name": "global_config",
+                    "writable": true,
+                    "pda": {
+                        "seeds": [
+                            {
+                                "kind": "const",
+                                "value": [
+                                    103,
+                                    108,
+                                    111,
+                                    98,
+                                    97,
+                                    108,
+                                    45,
+                                    99,
+                                    111,
+                                    110,
+                                    102,
+                                    105,
+                                    103
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "admin",
+                    "writable": true,
+                    "signer": true
+                },
+                {
+                    "name": "system_program",
+                    "address": "11111111111111111111111111111111"
+                }
+            ],
+            "args": [
+                {
+                    "name": "accepted_mint",
+                    "type": "pubkey"
+                },
+                {
+                    "name": "prompt_price",
+                    "type": "u64"
+                }
+            ]
+        },
+        {
+            "name": "pay",
+            "docs": [
+                "Pay for a prompt (or any other registered operation)."
+            ],
+            "discriminator": [
+                119,
+                18,
+                216,
+                65,
+                192,
+                117,
+                122,
+                220
+            ],
+            "accounts": [
+                {
+                    "name": "global_config",
+                    "pda": {
+                        "seeds": [
+                            {
+                                "kind": "const",
+                                "value": [
+                                    103,
+                                    108,
+                                    111,
+                                    98,
+                                    97,
+                                    108,
+                                    45,
+                                    99,
+                                    111,
+                                    110,
+                                    102,
+                                    105,
+                                    103
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "operation",
+                    "pda": {
+                        "seeds": [
+                            {
+                                "kind": "const",
+                                "value": [
+                                    111,
+                                    112,
+                                    101,
+                                    114,
+                                    97,
+                                    116,
+                                    105,
+                                    111,
+                                    110
+                                ]
+                            },
+                            {
+                                "kind": "arg",
+                                "path": "payment_type"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "user_payment_token",
+                    "writable": true
+                },
+                {
+                    "name": "agent_wallet"
+                },
+                {
+                    "name": "receiver_token",
+                    "writable": true
+                },
+                {
+                    "name": "payer",
+                    "writable": true,
+                    "signer": true
+                },
+                {
+                    "name": "token_program",
+                    "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+                }
+            ],
+            "args": [
+                {
+                    "name": "payment_type",
+                    "type": "u64"
+                },
+                {
+                    "name": "price",
+                    "type": "u64"
+                },
+                {
+                    "name": "payment_id",
+                    "type": {
+                        "array": [
+                            "u8",
+                            32
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "set_operation",
+            "docs": [
+                "Register or update an operation that users can purchase."
+            ],
+            "discriminator": [
+                41,
+                217,
+                83,
+                153,
+                61,
+                159,
+                14,
+                101
+            ],
+            "accounts": [
+                {
+                    "name": "global_config",
+                    "writable": true,
+                    "pda": {
+                        "seeds": [
+                            {
+                                "kind": "const",
+                                "value": [
+                                    103,
+                                    108,
+                                    111,
+                                    98,
+                                    97,
+                                    108,
+                                    45,
+                                    99,
+                                    111,
+                                    110,
+                                    102,
+                                    105,
+                                    103
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "operation",
+                    "writable": true,
+                    "pda": {
+                        "seeds": [
+                            {
+                                "kind": "const",
+                                "value": [
+                                    111,
+                                    112,
+                                    101,
+                                    114,
+                                    97,
+                                    116,
+                                    105,
+                                    111,
+                                    110
+                                ]
+                            },
+                            {
+                                "kind": "arg",
+                                "path": "payment_type"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "admin",
+                    "writable": true,
+                    "signer": true,
+                    "relations": [
+                        "global_config"
+                    ]
+                },
+                {
+                    "name": "system_program",
+                    "address": "11111111111111111111111111111111"
+                }
+            ],
+            "args": [
+                {
+                    "name": "payment_type",
+                    "type": "u64"
+                },
+                {
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "name": "payment_amount",
+                    "type": "u64"
+                },
+                {
+                    "name": "agent_token",
+                    "type": "pubkey"
+                }
+            ]
+        }
+    ],
+    "accounts": [
+        {
+            "name": "GlobalConfig",
+            "discriminator": [
+                149,
+                8,
+                156,
+                202,
+                160,
+                252,
+                176,
+                217
+            ]
+        },
+        {
+            "name": "Operation",
+            "discriminator": [
+                171,
+                150,
+                196,
+                17,
+                229,
+                166,
+                58,
+                44
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "OperationAdded",
+            "discriminator": [
+                224,
+                26,
+                119,
+                89,
+                98,
+                218,
+                246,
+                253
+            ]
+        },
+        {
+            "name": "OperationPaid",
+            "discriminator": [
+                247,
+                218,
+                172,
+                190,
+                170,
+                18,
+                145,
+                99
+            ]
+        }
+    ],
+    "errors": [
+        {
+            "code": 6000,
+            "name": "UnsupportedMint",
+            "msg": "Unsupported payment token mint"
+        },
+        {
+            "code": 6001,
+            "name": "NameTooLong",
+            "msg": "Operation name longer than 64 bytes"
+        },
+        {
+            "code": 6002,
+            "name": "WrongReceiver",
+            "msg": "Receiver token authority does not match agent wallet"
+        },
+        {
+            "code": 6003,
+            "name": "PriceMismatch",
+            "msg": "Provided price does not match operation price"
+        }
+    ],
+    "types": [
+        {
+            "name": "GlobalConfig",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "admin",
+                        "type": "pubkey"
+                    },
+                    {
+                        "name": "accepted_mint",
+                        "type": "pubkey"
+                    },
+                    {
+                        "name": "prompt_price",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Operation",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "payment_type",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "payment_amount",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "agent_token",
+                        "type": "pubkey"
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "OperationAdded",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "payment_amount",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "agent_token",
+                        "type": "pubkey"
+                    },
+                    {
+                        "name": "caller",
+                        "type": "pubkey"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "OperationPaid",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "payment_type",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "payment_mint",
+                        "type": "pubkey"
+                    },
+                    {
+                        "name": "payment_id",
+                        "type": {
+                            "array": [
+                                "u8",
+                                32
+                            ]
+                        }
+                    },
+                    {
+                        "name": "payment_amount",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "payer",
+                        "type": "pubkey"
+                    },
+                    {
+                        "name": "agent_wallet",
+                        "type": "pubkey"
+                    }
+                ]
+            }
+        }
+    ]
+}

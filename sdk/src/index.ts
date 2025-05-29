@@ -6,10 +6,10 @@ import {
     getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
 
-import idl from "../idl/payment_processor.json";
+import idl from "./idl/payment_processor.json";
 import type {
     PaymentProcessor,
-} from "../idl/payment_processor";
+} from "./idl/payment_processor";
 
 export default {
     idlJson: idl,
@@ -181,3 +181,11 @@ export default {
 };
 
 export type { PaymentProcessor };
+
+// Explicit named export for the SDK functions for proper typing
+export const xyberPaymentProcessorSdk = {
+    idlJson: idl,
+    idlType: null as unknown as PaymentProcessor,
+    create: (provider: anchor.Provider, program: Program<PaymentProcessor>) =>
+        exports.default.create(provider, program),
+};
