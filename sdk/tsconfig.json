@@ -1,4 +1,5 @@
 {
+  "include": ["src", "idl"],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
@@ -27,6 +28,9 @@
 
     /* Modules */
     "module": "commonjs",                                /* Specify what module code is generated. */
+    "outDir": "dist",
+    "declaration": true,
+    "declarationDir": "dist",
     // "rootDir": "./",                                  /* Specify the root folder within your source files. */
     // "moduleResolution": "node10",                     /* Specify how TypeScript looks up a file from a given module specifier. */
     // "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
