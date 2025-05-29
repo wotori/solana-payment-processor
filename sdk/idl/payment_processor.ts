@@ -19,7 +19,6 @@ export type PaymentProcessor = {
         "One-time program initialization by the admin.",
         "",
         "* `accepted_mint`  – SPL-Token mint that the program will accept as payment.",
-        "* `agent_wallet`   – Off-program wallet that ultimately receives the funds.",
         "* `prompt_price`   – Reference price for a single prompt, expressed in the *accepted",
         "mint’s smallest units (no oracle look-ups for now)."
       ],
@@ -61,9 +60,6 @@ export type PaymentProcessor = {
           }
         },
         {
-          "name": "agentWallet"
-        },
-        {
           "name": "admin",
           "writable": true,
           "signer": true
@@ -76,10 +72,6 @@ export type PaymentProcessor = {
       "args": [
         {
           "name": "acceptedMint",
-          "type": "pubkey"
-        },
-        {
-          "name": "agentWallet",
           "type": "pubkey"
         },
         {
@@ -159,6 +151,9 @@ export type PaymentProcessor = {
           "writable": true
         },
         {
+          "name": "agentWallet"
+        },
+        {
           "name": "receiverToken",
           "writable": true
         },
@@ -175,6 +170,10 @@ export type PaymentProcessor = {
       "args": [
         {
           "name": "paymentType",
+          "type": "u64"
+        },
+        {
+          "name": "price",
           "type": "u64"
         },
         {
@@ -355,6 +354,16 @@ export type PaymentProcessor = {
       "code": 6001,
       "name": "nameTooLong",
       "msg": "Operation name longer than 64 bytes"
+    },
+    {
+      "code": 6002,
+      "name": "wrongReceiver",
+      "msg": "Receiver token authority does not match agent wallet"
+    },
+    {
+      "code": 6003,
+      "name": "priceMismatch",
+      "msg": "Provided price does not match operation price"
     }
   ],
   "types": [
@@ -369,10 +378,6 @@ export type PaymentProcessor = {
           },
           {
             "name": "acceptedMint",
-            "type": "pubkey"
-          },
-          {
-            "name": "agentWallet",
             "type": "pubkey"
           },
           {
@@ -466,6 +471,10 @@ export type PaymentProcessor = {
           },
           {
             "name": "payer",
+            "type": "pubkey"
+          },
+          {
+            "name": "agentWallet",
             "type": "pubkey"
           }
         ]

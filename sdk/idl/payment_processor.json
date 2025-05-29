@@ -13,7 +13,6 @@
         "One-time program initialization by the admin.",
         "",
         "* `accepted_mint`  – SPL-Token mint that the program will accept as payment.",
-        "* `agent_wallet`   – Off-program wallet that ultimately receives the funds.",
         "* `prompt_price`   – Reference price for a single prompt, expressed in the *accepted",
         "mint’s smallest units (no oracle look-ups for now)."
       ],
@@ -55,9 +54,6 @@
           }
         },
         {
-          "name": "agent_wallet"
-        },
-        {
           "name": "admin",
           "writable": true,
           "signer": true
@@ -70,10 +66,6 @@
       "args": [
         {
           "name": "accepted_mint",
-          "type": "pubkey"
-        },
-        {
-          "name": "agent_wallet",
           "type": "pubkey"
         },
         {
@@ -153,6 +145,9 @@
           "writable": true
         },
         {
+          "name": "agent_wallet"
+        },
+        {
           "name": "receiver_token",
           "writable": true
         },
@@ -169,6 +164,10 @@
       "args": [
         {
           "name": "payment_type",
+          "type": "u64"
+        },
+        {
+          "name": "price",
           "type": "u64"
         },
         {
@@ -349,6 +348,16 @@
       "code": 6001,
       "name": "NameTooLong",
       "msg": "Operation name longer than 64 bytes"
+    },
+    {
+      "code": 6002,
+      "name": "WrongReceiver",
+      "msg": "Receiver token authority does not match agent wallet"
+    },
+    {
+      "code": 6003,
+      "name": "PriceMismatch",
+      "msg": "Provided price does not match operation price"
     }
   ],
   "types": [
@@ -363,10 +372,6 @@
           },
           {
             "name": "accepted_mint",
-            "type": "pubkey"
-          },
-          {
-            "name": "agent_wallet",
             "type": "pubkey"
           },
           {
@@ -460,6 +465,10 @@
           },
           {
             "name": "payer",
+            "type": "pubkey"
+          },
+          {
+            "name": "agent_wallet",
             "type": "pubkey"
           }
         ]

@@ -46,7 +46,6 @@ describe("payment‑processor (SDK)", () => {
 
     const { signature } = await sdk.initialize({
       acceptedMint,
-      agentWallet: agentWallet.publicKey,
       promptPrice,
     });
     console.log("initialize tx:", signature);
@@ -57,9 +56,6 @@ describe("payment‑processor (SDK)", () => {
     // Basic expectations
     expect(globalConfig.acceptedMint.toBase58()).to.equal(
       acceptedMint.toBase58(),
-    );
-    expect(globalConfig.agentWallet.toBase58()).to.equal(
-      agentWallet.publicKey.toBase58(),
     );
     expect(globalConfig.promptPrice.toNumber()).to.equal(promptPrice.toNumber());
   });
@@ -122,6 +118,8 @@ describe("payment‑processor (SDK)", () => {
 
     const { signature } = await sdk.pay({
       paymentType,
+      price: 2_000_000, // must match operation.paymentAmount
+      agentWallet: agentWallet.publicKey,
       paymentId,
       userPaymentToken: userAta,
       receiverToken: receiverAta,

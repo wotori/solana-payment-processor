@@ -39,16 +39,14 @@ export default {
 
         async function initialize(args: {
             acceptedMint: PublicKey;
-            agentWallet: PublicKey;
             promptPrice: anchor.BN;
         }): Promise<{ signature: string; globalConfigPda: PublicKey }> {
             const [globalConfigPda] = getGlobalConfigPda();
 
             const signature = await program.methods
-                .initialize(args.acceptedMint, args.agentWallet, args.promptPrice)
+                .initialize(args.acceptedMint, args.promptPrice)
                 .accountsStrict({
                     globalConfig: globalConfigPda,
-                    agentWallet: args.agentWallet,
                     admin: payer,
                     systemProgram: SystemProgram.programId,
                 })
@@ -86,6 +84,8 @@ export default {
 
         async function pay(args: {
             paymentType: number;
+            price: anchor.BN | number;
+            agentWallet: PublicKey;
             paymentId: Uint8Array | number[] | Buffer;
             userPaymentToken?: PublicKey;
             receiverToken?: PublicKey;
@@ -94,7 +94,7 @@ export default {
             if (!globalConfig) throw new Error("GlobalConfig not found");
 
             const acceptedMint = globalConfig.acceptedMint as PublicKey;
-            const agentWallet = globalConfig.agentWallet as PublicKey;
+            const agentWallet = args.agentWallet;
 
             const userToken =
                 args.userPaymentToken ??
@@ -116,11 +116,16 @@ export default {
                 throw new Error("paymentId must be exactly 32 bytes");
 
             const signature = await program.methods
-                .pay(new anchor.BN(args.paymentType), Array.from(pid) as number[])
+                .pay(
+                    new anchor.BN(args.paymentType),
+                    new anchor.BN(args.price),
+                    Array.from(pid) as number[],
+                )
                 .accountsStrict({
                     globalConfig: globalConfigPda,
                     operation: operationPda,
                     userPaymentToken: userToken,
+                    agentWallet,
                     receiverToken,
                     payer,
                     tokenProgram: TOKEN_PROGRAM_ID,

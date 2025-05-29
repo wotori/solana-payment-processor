@@ -12,19 +12,16 @@ pub mod payment_processor {
     /// One-time program initialization by the admin.
     ///
     /// * `accepted_mint`  – SPL-Token mint that the program will accept as payment.
-    /// * `agent_wallet`   – Off-program wallet that ultimately receives the funds.
     /// * `prompt_price`   – Reference price for a single prompt, expressed in the *accepted
     ///                       mint’s smallest units (no oracle look-ups for now).
     pub fn initialize(
         ctx: Context<Initialize>,
         accepted_mint: Pubkey,
-        agent_wallet: Pubkey,
         prompt_price: u64,
     ) -> Result<()> {
         let cfg = &mut ctx.accounts.global_config;
         cfg.admin = ctx.accounts.admin.key();
         cfg.accepted_mint = accepted_mint;
-        cfg.agent_wallet = agent_wallet;
         cfg.prompt_price = prompt_price;
         cfg.bump = ctx.bumps.global_config;
         Ok(())
@@ -57,7 +54,7 @@ pub mod payment_processor {
     }
 
     /// Pay for a prompt (or any other registered operation).
-    pub fn pay(ctx: Context<Pay>, payment_type: u64, payment_id: [u8; 32]) -> Result<()> {
+    pub fn pay(ctx: Context<Pay>, payment_type: u64, price: u64, payment_id: [u8; 32]) -> Result<()> {
         let op = &ctx.accounts.operation;
         let cfg = &ctx.accounts.global_config;
 
@@ -72,7 +69,14 @@ pub mod payment_processor {
             XyberError::UnsupportedMint
         );
 
-        let amount = op.payment_amount;
+        require!(price == op.payment_amount, XyberError::PriceMismatch);
+        require_keys_eq!(
+            ctx.accounts.receiver_token.owner,
+            ctx.accounts.agent_wallet.key(),
+            XyberError::WrongReceiver
+        );
+        let amount = price;
+
         let cpi_ctx = CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
             Transfer {
@@ -89,6 +93,7 @@ pub mod payment_processor {
             payment_id,
             payment_amount: amount,
             payer: ctx.accounts.payer.key(),
+            agent_wallet: ctx.accounts.agent_wallet.key(),
         });
         Ok(())
     }
@@ -104,9 +109,6 @@ pub struct Initialize<'info> {
         space = 8 + GlobalConfig::SIZE,
     )]
     pub global_config: Account<'info, GlobalConfig>,
-
-    /// CHECK: Stored as-is; validity is enforced off-chain.
-    pub agent_wallet: UncheckedAccount<'info>,
 
     #[account(mut)]
     pub admin: Signer<'info>,
@@ -162,6 +164,9 @@ pub struct Pay<'info> {
     )]
     pub user_payment_token: Account<'info, TokenAccount>,
 
+    /// CHECK: Wallet that will receive the payment
+    pub agent_wallet: UncheckedAccount<'info>,
+
     #[account(
         mut,
         token::mint = global_config.accepted_mint,
@@ -178,13 +183,12 @@ pub struct Pay<'info> {
 pub struct GlobalConfig {
     pub admin: Pubkey,
     pub accepted_mint: Pubkey,
-    pub agent_wallet: Pubkey,
     pub prompt_price: u64,
     pub bump: u8,
 }
 
 impl GlobalConfig {
-    const SIZE: usize = 32 + 32 + 32 + 8 + 1;
+    const SIZE: usize = 32 + 32 + 8 + 1;
 }
 
 #[account]
@@ -207,6 +211,7 @@ pub struct OperationPaid {
     pub payment_id: [u8; 32],
     pub payment_amount: u64,
     pub payer: Pubkey,
+    pub agent_wallet: Pubkey,
 }
 
 #[event]
@@ -223,4 +228,8 @@ pub enum XyberError {
     UnsupportedMint,
     #[msg("Operation name longer than 64 bytes")]
     NameTooLong,
+    #[msg("Receiver token authority does not match agent wallet")]
+    WrongReceiver,
+    #[msg("Provided price does not match operation price")]
+    PriceMismatch,
 }
