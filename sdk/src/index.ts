@@ -7,9 +7,7 @@ import {
 } from "@solana/spl-token";
 
 import idl from "./idl/payment_processor.json";
-import type {
-    PaymentProcessor,
-} from "./idl/payment_processor";
+import type { PaymentProcessor } from "./idl/payment_processor";
 
 export default {
     idlJson: idl,
@@ -27,11 +25,11 @@ export default {
             );
         }
 
-        function getOperationPda(paymentType: number): [PublicKey, number] {
+        function getOperationPda(paymentType: string): [PublicKey, number] {
             return PublicKey.findProgramAddressSync(
                 [
                     Buffer.from(OPERATION_SEED),
-                    new anchor.BN(paymentType).toArrayLike(Buffer, "le", 8),
+                    Buffer.from(paymentType),
                 ],
                 program.programId,
             );
@@ -53,7 +51,7 @@ export default {
         }
 
         async function setOperation(args: {
-            paymentType: number;
+            paymentType: string;
             name: string;
             paymentAmount: anchor.BN;
             acceptedMint: PublicKey;
@@ -64,7 +62,7 @@ export default {
 
             const signature = await program.methods
                 .setOperation(
-                    new anchor.BN(args.paymentType),
+                    args.paymentType,
                     args.name,
                     args.paymentAmount,
                     args.acceptedMint,
@@ -82,7 +80,7 @@ export default {
         }
 
         async function pay(args: {
-            paymentType: number;
+            paymentType: string;
             price: anchor.BN | number;
             agentWallet: PublicKey;
             paymentId: Uint8Array | number[] | Buffer;
@@ -116,7 +114,7 @@ export default {
 
             const signature = await program.methods
                 .pay(
-                    new anchor.BN(args.paymentType),
+                    args.paymentType,
                     new anchor.BN(args.price),
                     Array.from(pid) as number[],
                 )
@@ -147,7 +145,7 @@ export default {
             }
         }
 
-        async function getOperation(paymentType: number) {
+        async function getOperation(paymentType: string) {
             const [pda] = getOperationPda(paymentType);
             try {
                 const data = await program.account.operation.fetch(pda);
@@ -157,14 +155,15 @@ export default {
             }
         }
 
-        async function getAllOperations(max = 20) {
-            const out: { paymentType: number; data: any }[] = [];
-            for (let i = 0; i < max; i++) {
-                const { operation } = await getOperation(i);
-                if (operation) out.push({ paymentType: i, data: operation });
-            }
-            return out;
-        }
+        // TODO: not used as we switched to string from u64
+        // async function getAllOperations(max = 20) {
+        //     const out: { paymentType: number; data: any }[] = [];
+        //     for (let i = 0; i < max; i++) {
+        //         const { operation } = await getOperation(i);
+        //         if (operation) out.push({ paymentType: i, data: operation });
+        //     }
+        //     return out;
+        // }
 
         return {
             getGlobalConfigPda,
@@ -174,7 +173,7 @@ export default {
             pay,
             getGlobalConfig,
             getOperation,
-            getAllOperations,
+            // getAllOperations,
         };
     },
 };

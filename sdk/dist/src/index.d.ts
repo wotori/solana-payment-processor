@@ -170,13 +170,13 @@ declare const _default: {
     idlType: PaymentProcessor;
     create(provider: anchor.Provider, program: Program<PaymentProcessor>): {
         getGlobalConfigPda: () => [PublicKey, number];
-        getOperationPda: (paymentType: number) => [PublicKey, number];
+        getOperationPda: (paymentType: string) => [PublicKey, number];
         initialize: (newAdmin: PublicKey) => Promise<{
             signature: string;
             globalConfigPda: PublicKey;
         }>;
         setOperation: (args: {
-            paymentType: number;
+            paymentType: string;
             name: string;
             paymentAmount: anchor.BN;
             acceptedMint: PublicKey;
@@ -186,7 +186,7 @@ declare const _default: {
             operationPda: PublicKey;
         }>;
         pay: (args: {
-            paymentType: number;
+            paymentType: string;
             price: anchor.BN | number;
             agentWallet: PublicKey;
             paymentId: Uint8Array | number[] | Buffer;
@@ -199,10 +199,10 @@ declare const _default: {
             globalConfigPda: PublicKey;
             globalConfig: any | null;
         }>;
-        getOperation: (paymentType: number) => Promise<{
+        getOperation: (paymentType: string) => Promise<{
             operationPda: anchor.web3.PublicKey;
             operation: {
-                paymentType: anchor.BN;
+                paymentType: string;
                 name: string;
                 paymentAmount: anchor.BN;
                 acceptedMint: anchor.web3.PublicKey;
@@ -213,10 +213,6 @@ declare const _default: {
             operationPda: anchor.web3.PublicKey;
             operation: null;
         }>;
-        getAllOperations: (max?: number) => Promise<{
-            paymentType: number;
-            data: any;
-        }[]>;
     };
 };
 export default _default;

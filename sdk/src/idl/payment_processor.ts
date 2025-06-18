@@ -162,7 +162,7 @@ export type PaymentProcessor = {
       "args": [
         {
           "name": "paymentType",
-          "type": "u64"
+          "type": "string"
         },
         {
           "name": "price",
@@ -263,7 +263,7 @@ export type PaymentProcessor = {
       "args": [
         {
           "name": "paymentType",
-          "type": "u64"
+          "type": "string"
         },
         {
           "name": "name",
@@ -391,7 +391,7 @@ export type PaymentProcessor = {
         "fields": [
           {
             "name": "paymentType",
-            "type": "u64"
+            "type": "string"
           },
           {
             "name": "name",
@@ -447,7 +447,7 @@ export type PaymentProcessor = {
         "fields": [
           {
             "name": "paymentType",
-            "type": "u64"
+            "type": "string"
           },
           {
             "name": "paymentMint",

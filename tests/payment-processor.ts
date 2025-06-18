@@ -8,7 +8,7 @@ import {
   getAccount,
 } from "@solana/spl-token";
 
-import { PaymentProcessor } from "../target/types/payment_processor";
+import type { PaymentProcessor } from "../sdk/src";
 import processorSdk from "../sdk/src";
 import { expect } from "chai";
 
@@ -52,7 +52,7 @@ describe("payment‑processor (SDK)", () => {
   });
 
   it("registers an operation via SDK", async () => {
-    const paymentType = 1;
+    const paymentType = "1";
     const name = "text‑completion";
     const paymentAmount = new anchor.BN(2_000_000); // 2 tokens
     const agentToken = Keypair.generate().publicKey;
@@ -78,7 +78,7 @@ describe("payment‑processor (SDK)", () => {
   });
 
   it("processes a payment and transfers funds", async () => {
-    const paymentType = 1; // the one we registered above
+    const paymentType = "1"; // the one we registered above
     const paymentId = Uint8Array.from(Array(32).fill(7)); // arbitrary 32‑byte id
 
     // --- create actual on‑chain token accounts ---

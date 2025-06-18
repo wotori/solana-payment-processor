@@ -28,7 +28,7 @@ pub mod payment_processor {
     /// Register or update an operation that users can purchase.
     pub fn set_operation(
         ctx: Context<SetOperation>,
-        payment_type: u64,
+        payment_type: String,
         name: String,
         payment_amount: u64,
         accepted_mint: Pubkey,
@@ -37,7 +37,7 @@ pub mod payment_processor {
         require!(name.len() <= 64, XyberError::NameTooLong);
 
         let operation = &mut ctx.accounts.operation;
-        operation.payment_type = payment_type;
+        operation.payment_type = payment_type.clone();
         operation.name = name.clone();
         operation.payment_amount = payment_amount;
         operation.accepted_mint = accepted_mint;
@@ -54,11 +54,24 @@ pub mod payment_processor {
     }
 
     /// Pay for a prompt (or any other registered operation).
-    pub fn pay(ctx: Context<Pay>, payment_type: u64, price: u64, payment_id: [u8; 32]) -> Result<()> {
+    pub fn pay(
+        ctx: Context<Pay>,
+        payment_type: String,
+        price: u64,
+        payment_id: [u8; 32],
+    ) -> Result<()> {
         let op = &ctx.accounts.operation;
 
-        require_keys_eq!(ctx.accounts.user_payment_token.mint, op.accepted_mint, XyberError::UnsupportedMint);
-        require_keys_eq!(ctx.accounts.receiver_token.mint, op.accepted_mint, XyberError::UnsupportedMint);
+        require_keys_eq!(
+            ctx.accounts.user_payment_token.mint,
+            op.accepted_mint,
+            XyberError::UnsupportedMint
+        );
+        require_keys_eq!(
+            ctx.accounts.receiver_token.mint,
+            op.accepted_mint,
+            XyberError::UnsupportedMint
+        );
 
         require!(price == op.payment_amount, XyberError::PriceMismatch);
         require_keys_eq!(
@@ -79,7 +92,7 @@ pub mod payment_processor {
         token::transfer(cpi_ctx, amount)?;
 
         emit!(OperationPaid {
-            payment_type,
+            payment_type: payment_type.clone(),
             payment_mint: op.accepted_mint,
             payment_id,
             payment_amount: amount,
@@ -108,20 +121,20 @@ pub struct Initialize<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(payment_type: u64)]
+#[instruction(payment_type: String)]
 pub struct SetOperation<'info> {
     #[account(
         mut,
         seeds = [b"global-config"],
         bump = global_config.bump,
-        has_one = admin,
+        has_one = admin @ XyberError::Unauthorized,
     )]
     pub global_config: Account<'info, GlobalConfig>,
 
     #[account(
         init_if_needed,
         payer = admin,
-        seeds = [b"operation", payment_type.to_le_bytes().as_ref()],
+        seeds = [b"operation", payment_type.as_bytes().as_ref()],
         bump,
         space = 8 + Operation::SIZE,
     )]
@@ -134,7 +147,7 @@ pub struct SetOperation<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(payment_type: u64)]
+#[instruction(payment_type: String)]
 pub struct Pay<'info> {
     #[account(
         seeds = [b"global-config"],
@@ -143,7 +156,7 @@ pub struct Pay<'info> {
     pub global_config: Account<'info, GlobalConfig>,
 
     #[account(
-        seeds = [b"operation", payment_type.to_le_bytes().as_ref()],
+        seeds = [b"operation", payment_type.as_bytes().as_ref()],
         bump = operation.bump,
     )]
     pub operation: Account<'info, Operation>,
@@ -173,7 +186,7 @@ pub struct Pay<'info> {
 #[account]
 pub struct GlobalConfig {
     pub admin: Pubkey,
-    pub bump: u8
+    pub bump: u8,
 }
 
 impl GlobalConfig {
@@ -182,7 +195,7 @@ impl GlobalConfig {
 
 #[account]
 pub struct Operation {
-    pub payment_type: u64,
+    pub payment_type: String,
     pub name: String,
     pub payment_amount: u64,
     pub accepted_mint: Pubkey,
@@ -191,12 +204,17 @@ pub struct Operation {
 }
 
 impl Operation {
-    pub const SIZE: usize = 200;
+    pub const SIZE: usize = 4 + 32  // payment_type (4-byte length + up to 32 bytes)
+        + 4 + 64                    // name (4-byte length + up to 64 bytes)
+        + 8                         // payment_amount
+        + 32                        // accepted_mint
+        + 32                        // agent_token
+        + 1; // bump
 }
 
 #[event]
 pub struct OperationPaid {
-    pub payment_type: u64,
+    pub payment_type: String,
     pub payment_mint: Pubkey,
     pub payment_id: [u8; 32],
     pub payment_amount: u64,

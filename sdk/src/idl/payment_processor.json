@@ -156,7 +156,7 @@
       "args": [
         {
           "name": "payment_type",
-          "type": "u64"
+          "type": "string"
         },
         {
           "name": "price",
@@ -257,7 +257,7 @@
       "args": [
         {
           "name": "payment_type",
-          "type": "u64"
+          "type": "string"
         },
         {
           "name": "name",
@@ -385,7 +385,7 @@
         "fields": [
           {
             "name": "payment_type",
-            "type": "u64"
+            "type": "string"
           },
           {
             "name": "name",
@@ -441,7 +441,7 @@
         "fields": [
           {
             "name": "payment_type",
-            "type": "u64"
+            "type": "string"
           },
           {
             "name": "payment_mint",

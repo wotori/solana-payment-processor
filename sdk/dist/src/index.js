@@ -63,7 +63,7 @@ exports.default = {
         function getOperationPda(paymentType) {
             return web3_js_1.PublicKey.findProgramAddressSync([
                 Buffer.from(OPERATION_SEED),
-                new anchor.BN(paymentType).toArrayLike(Buffer, "le", 8),
+                Buffer.from(paymentType),
             ], program.programId);
         }
         function initialize(newAdmin) {
@@ -85,7 +85,7 @@ exports.default = {
                 const [operationPda] = getOperationPda(args.paymentType);
                 const [globalConfigPda] = getGlobalConfigPda();
                 const signature = yield program.methods
-                    .setOperation(new anchor.BN(args.paymentType), args.name, args.paymentAmount, args.acceptedMint, args.agentToken)
+                    .setOperation(args.paymentType, args.name, args.paymentAmount, args.acceptedMint, args.agentToken)
                     .accountsStrict({
                     globalConfig: globalConfigPda,
                     operation: operationPda,
@@ -114,7 +114,7 @@ exports.default = {
                 if (pid.length !== 32)
                     throw new Error("paymentId must be exactly 32 bytes");
                 const signature = yield program.methods
-                    .pay(new anchor.BN(args.paymentType), new anchor.BN(args.price), Array.from(pid))
+                    .pay(args.paymentType, new anchor.BN(args.price), Array.from(pid))
                     .accountsStrict({
                     globalConfig: globalConfigPda,
                     operation: operationPda,
@@ -152,17 +152,15 @@ exports.default = {
                 }
             });
         }
-        function getAllOperations() {
-            return __awaiter(this, arguments, void 0, function* (max = 20) {
-                const out = [];
-                for (let i = 0; i < max; i++) {
-                    const { operation } = yield getOperation(i);
-                    if (operation)
-                        out.push({ paymentType: i, data: operation });
-                }
-                return out;
-            });
-        }
+        // TODO: not used as we switched to string from u64
+        // async function getAllOperations(max = 20) {
+        //     const out: { paymentType: number; data: any }[] = [];
+        //     for (let i = 0; i < max; i++) {
+        //         const { operation } = await getOperation(i);
+        //         if (operation) out.push({ paymentType: i, data: operation });
+        //     }
+        //     return out;
+        // }
         return {
             getGlobalConfigPda,
             getOperationPda,
@@ -171,7 +169,7 @@ exports.default = {
             pay,
             getGlobalConfig,
             getOperation,
-            getAllOperations,
+            // getAllOperations,
         };
     },
 };
