@@ -53,13 +53,11 @@ describe("payment‑processor (SDK)", () => {
 
   it("registers an operation via SDK", async () => {
     const paymentType = "1";
-    const name = "text‑completion";
     const paymentAmount = new anchor.BN(2_000_000); // 2 tokens
     const agentToken = Keypair.generate().publicKey;
 
     const { signature } = await sdk.setOperation({
       paymentType,
-      name,
       paymentAmount,
       acceptedMint,
       agentToken,
@@ -69,7 +67,6 @@ describe("payment‑processor (SDK)", () => {
     const { operation } = await sdk.getOperation(paymentType);
     if (!operation) throw new Error("Operation not found");
 
-    expect(operation.name).to.equal(name);
     expect(operation.paymentAmount.toNumber()).to.equal(
       paymentAmount.toNumber(),
     );

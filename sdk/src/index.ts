@@ -52,7 +52,6 @@ export default {
 
         async function setOperation(args: {
             paymentType: string;
-            name: string;
             paymentAmount: anchor.BN;
             acceptedMint: PublicKey;
             agentToken: PublicKey;
@@ -63,7 +62,6 @@ export default {
             const signature = await program.methods
                 .setOperation(
                     args.paymentType,
-                    args.name,
                     args.paymentAmount,
                     args.acceptedMint,
                     args.agentToken,

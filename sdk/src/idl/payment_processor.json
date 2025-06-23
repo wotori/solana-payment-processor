@@ -260,10 +260,6 @@
           "type": "string"
         },
         {
-          "name": "name",
-          "type": "string"
-        },
-        {
           "name": "payment_amount",
           "type": "u64"
         },
@@ -342,21 +338,16 @@
     },
     {
       "code": 6001,
-      "name": "NameTooLong",
-      "msg": "Operation name longer than 64 bytes"
-    },
-    {
-      "code": 6002,
       "name": "WrongReceiver",
       "msg": "Receiver token authority does not match agent wallet"
     },
     {
-      "code": 6003,
+      "code": 6002,
       "name": "PriceMismatch",
       "msg": "Provided price does not match operation price"
     },
     {
-      "code": 6004,
+      "code": 6003,
       "name": "Unauthorized",
       "msg": "Caller is not authorized to modify the global config"
     }
@@ -388,10 +379,6 @@
             "type": "string"
           },
           {
-            "name": "name",
-            "type": "string"
-          },
-          {
             "name": "payment_amount",
             "type": "u64"
           },
@@ -415,10 +402,6 @@
       "type": {
         "kind": "struct",
         "fields": [
-          {
-            "name": "name",
-            "type": "string"
-          },
           {
             "name": "payment_amount",
             "type": "u64"

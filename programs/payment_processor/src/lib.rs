@@ -29,23 +29,18 @@ pub mod payment_processor {
     pub fn set_operation(
         ctx: Context<SetOperation>,
         payment_type: String,
-        name: String,
         payment_amount: u64,
         accepted_mint: Pubkey,
         agent_token: Pubkey,
     ) -> Result<()> {
-        require!(name.len() <= 64, XyberError::NameTooLong);
-
         let operation = &mut ctx.accounts.operation;
         operation.payment_type = payment_type.clone();
-        operation.name = name.clone();
         operation.payment_amount = payment_amount;
         operation.accepted_mint = accepted_mint;
         operation.agent_token = agent_token;
         operation.bump = ctx.bumps.operation;
 
         emit!(OperationAdded {
-            name,
             payment_amount,
             agent_token,
             caller: ctx.accounts.admin.key(),
@@ -196,7 +191,6 @@ impl GlobalConfig {
 #[account]
 pub struct Operation {
     pub payment_type: String,
-    pub name: String,
     pub payment_amount: u64,
     pub accepted_mint: Pubkey,
     pub agent_token: Pubkey,
@@ -204,12 +198,11 @@ pub struct Operation {
 }
 
 impl Operation {
-    pub const SIZE: usize = 4 + 32  // payment_type (4-byte length + up to 32 bytes)
-        + 4 + 64                    // name (4-byte length + up to 64 bytes)
-        + 8                         // payment_amount
-        + 32                        // accepted_mint
-        + 32                        // agent_token
-        + 1; // bump
+    pub const SIZE: usize = 4 + 32        // payment_type (len + up to 32 bytes)
+        + 8                                // payment_amount
+        + 32                               // accepted_mint
+        + 32                               // agent_token
+        + 1;                               // bump
 }
 
 #[event]
@@ -224,7 +217,6 @@ pub struct OperationPaid {
 
 #[event]
 pub struct OperationAdded {
-    pub name: String,
     pub payment_amount: u64,
     pub agent_token: Pubkey,
     pub caller: Pubkey,
@@ -234,8 +226,6 @@ pub struct OperationAdded {
 pub enum XyberError {
     #[msg("Unsupported payment token mint")]
     UnsupportedMint,
-    #[msg("Operation name longer than 64 bytes")]
-    NameTooLong,
     #[msg("Receiver token authority does not match agent wallet")]
     WrongReceiver,
     #[msg("Provided price does not match operation price")]
