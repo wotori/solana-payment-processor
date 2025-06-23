@@ -266,10 +266,6 @@ export type PaymentProcessor = {
                     "type": "string";
                 },
                 {
-                    "name": "name";
-                    "type": "string";
-                },
-                {
                     "name": "paymentAmount";
                     "type": "u64";
                 },
@@ -348,21 +344,16 @@ export type PaymentProcessor = {
         },
         {
             "code": 6001;
-            "name": "nameTooLong";
-            "msg": "Operation name longer than 64 bytes";
-        },
-        {
-            "code": 6002;
             "name": "wrongReceiver";
             "msg": "Receiver token authority does not match agent wallet";
         },
         {
-            "code": 6003;
+            "code": 6002;
             "name": "priceMismatch";
             "msg": "Provided price does not match operation price";
         },
         {
-            "code": 6004;
+            "code": 6003;
             "name": "unauthorized";
             "msg": "Caller is not authorized to modify the global config";
         }
@@ -394,10 +385,6 @@ export type PaymentProcessor = {
                         "type": "string";
                     },
                     {
-                        "name": "name";
-                        "type": "string";
-                    },
-                    {
                         "name": "paymentAmount";
                         "type": "u64";
                     },
@@ -421,10 +408,6 @@ export type PaymentProcessor = {
             "type": {
                 "kind": "struct";
                 "fields": [
-                    {
-                        "name": "name";
-                        "type": "string";
-                    },
                     {
                         "name": "paymentAmount";
                         "type": "u64";

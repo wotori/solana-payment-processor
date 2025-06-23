@@ -177,7 +177,6 @@ declare const _default: {
         }>;
         setOperation: (args: {
             paymentType: string;
-            name: string;
             paymentAmount: anchor.BN;
             acceptedMint: PublicKey;
             agentToken: PublicKey;
@@ -203,7 +202,6 @@ declare const _default: {
             operationPda: anchor.web3.PublicKey;
             operation: {
                 paymentType: string;
-                name: string;
                 paymentAmount: anchor.BN;
                 acceptedMint: anchor.web3.PublicKey;
                 agentToken: anchor.web3.PublicKey;
