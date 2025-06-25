@@ -159,7 +159,7 @@
           "type": "string"
         },
         {
-          "name": "price",
+          "name": "amount",
           "type": "u64"
         },
         {
@@ -264,7 +264,7 @@
           "type": "u64"
         },
         {
-          "name": "accepted_mint",
+          "name": "payment_token",
           "type": "pubkey"
         }
       ]
@@ -379,7 +379,7 @@
             "type": "u64"
           },
           {
-            "name": "accepted_mint",
+            "name": "payment_token",
             "type": "pubkey"
           }
         ]

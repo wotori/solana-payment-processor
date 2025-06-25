@@ -165,7 +165,7 @@ export type PaymentProcessor = {
           "type": "string"
         },
         {
-          "name": "price",
+          "name": "amount",
           "type": "u64"
         },
         {
@@ -270,7 +270,7 @@ export type PaymentProcessor = {
           "type": "u64"
         },
         {
-          "name": "acceptedMint",
+          "name": "paymentToken",
           "type": "pubkey"
         }
       ]
@@ -385,7 +385,7 @@ export type PaymentProcessor = {
             "type": "u64"
           },
           {
-            "name": "acceptedMint",
+            "name": "paymentToken",
             "type": "pubkey"
           }
         ]

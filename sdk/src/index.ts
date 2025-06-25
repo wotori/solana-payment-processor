@@ -53,7 +53,7 @@ export default {
         async function setPaymentType(args: {
             paymentType: string;
             paymentAmount: anchor.BN;
-            acceptedMint: PublicKey;
+            paymentToken: PublicKey;
         }): Promise<{ signature: string; operationPda: PublicKey }> {
             const [operationPda] = getOperationPda(args.paymentType);
             const [globalConfigPda] = getGlobalConfigPda();
@@ -62,7 +62,7 @@ export default {
                 .setPaymentType(
                     args.paymentType,
                     args.paymentAmount,
-                    args.acceptedMint,
+                    args.paymentToken,
                 )
                 .accountsStrict({
                     globalConfig: globalConfigPda,
@@ -86,16 +86,16 @@ export default {
             const { operation } = await getOperation(args.paymentType);
             if (!operation) throw new Error("Operation not found");
 
-            const acceptedMint = operation.acceptedMint as PublicKey;
+            const paymentToken = operation.paymentToken as PublicKey;
             const agentWallet = args.agentWallet;
 
             const userToken =
                 args.userPaymentToken ??
-                getAssociatedTokenAddressSync(acceptedMint, payer);
+                getAssociatedTokenAddressSync(paymentToken, payer);
 
             const receiverToken =
                 args.receiverToken ??
-                getAssociatedTokenAddressSync(acceptedMint, agentWallet, true);
+                getAssociatedTokenAddressSync(paymentToken, agentWallet, true);
 
             const [globalConfigPda] = getGlobalConfigPda();
             const [operationPda] = getOperationPda(args.paymentType);

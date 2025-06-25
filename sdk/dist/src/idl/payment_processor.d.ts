@@ -270,7 +270,7 @@ export type PaymentProcessor = {
                     "type": "u64";
                 },
                 {
-                    "name": "acceptedMint";
+                    "name": "paymentToken";
                     "type": "pubkey";
                 },
                 {
@@ -389,7 +389,7 @@ export type PaymentProcessor = {
                         "type": "u64";
                     },
                     {
-                        "name": "acceptedMint";
+                        "name": "paymentToken";
                         "type": "pubkey";
                     },
                     {

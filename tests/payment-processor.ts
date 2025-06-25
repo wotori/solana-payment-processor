@@ -21,12 +21,12 @@ const program = anchor.workspace
 const sdk = processorSdk.create(provider, program);
 
 describe("payment‑processor (SDK)", () => {
-  let acceptedMint: PublicKey;
+  let paymentToken: PublicKey;
   let agentWallet: Keypair;
 
   before(async () => {
     // Create a dummy SPL‑Token mint we will use for all tests (6 decimals).
-    acceptedMint = await createMint(
+    paymentToken = await createMint(
       provider.connection,
       provider.wallet.payer,
       provider.wallet.publicKey,
@@ -58,7 +58,7 @@ describe("payment‑processor (SDK)", () => {
     const { signature } = await sdk.setPaymentType({
       paymentType,
       paymentAmount,
-      acceptedMint,
+      paymentToken,
     });
     console.log("setPaymentType tx:", signature);
 
@@ -68,7 +68,7 @@ describe("payment‑processor (SDK)", () => {
     expect(operation.paymentAmount.toNumber()).to.equal(
       paymentAmount.toNumber(),
     );
-    expect(operation.acceptedMint.toBase58()).to.equal(acceptedMint.toBase58());
+    expect(operation.paymentToken.toBase58()).to.equal(paymentToken.toBase58());
   });
 
   it("processes a payment and transfers funds", async () => {
@@ -78,19 +78,19 @@ describe("payment‑processor (SDK)", () => {
     // --- create actual on‑chain token accounts ---
     const { operation } = await sdk.getOperation(paymentType);
     if (!operation) throw new Error("Operation not found");
-    const acceptedMint = operation.acceptedMint as PublicKey;
+    const paymentToken = operation.paymentToken as PublicKey;
 
     const userAta = await createAssociatedTokenAccount(
       provider.connection,
       provider.wallet.payer,          // payer of rent / fees
-      acceptedMint,                   // mint
+      paymentToken,                   // mint
       provider.wallet.publicKey,      // owner
     );
 
     const receiverAta = await createAssociatedTokenAccount(
       provider.connection,
       provider.wallet.payer,          // payer
-      acceptedMint,
+      paymentToken,
       agentWallet.publicKey,          // owner (agent)
     );
 
@@ -98,7 +98,7 @@ describe("payment‑processor (SDK)", () => {
     await mintTo(
       provider.connection,
       provider.wallet.payer,
-      acceptedMint,
+      paymentToken,
       userAta,
       provider.wallet.publicKey,
       5_000_000,

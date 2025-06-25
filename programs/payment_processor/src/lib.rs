@@ -30,12 +30,12 @@ pub mod payment_processor {
         ctx: Context<SetPaymentType>,
         payment_type: String,
         payment_amount: u64,
-        accepted_mint: Pubkey,
+        payment_token: Pubkey,
     ) -> Result<()> {
         let operation = &mut ctx.accounts.operation;
         operation.payment_type = payment_type;
         operation.payment_amount = payment_amount;
-        operation.accepted_mint = accepted_mint;
+        operation.payment_token = payment_token;
 
         emit!(OperationAdded {
             payment_amount,
@@ -47,29 +47,29 @@ pub mod payment_processor {
     pub fn pay(
         ctx: Context<Pay>,
         payment_type: String,
-        price: u64,
+        amount: u64,
         payment_id: [u8; 32],
     ) -> Result<()> {
         let op = &ctx.accounts.operation;
 
         require_keys_eq!(
             ctx.accounts.user_payment_token.mint,
-            op.accepted_mint,
+            op.payment_token,
             XyberError::UnsupportedMint
         );
         require_keys_eq!(
             ctx.accounts.receiver_token.mint,
-            op.accepted_mint,
+            op.payment_token,
             XyberError::UnsupportedMint
         );
 
-        require!(price == op.payment_amount, XyberError::PriceMismatch);
+        require!(amount == op.payment_amount, XyberError::PriceMismatch);
         require_keys_eq!(
             ctx.accounts.receiver_token.owner,
             ctx.accounts.agent_wallet.key(),
             XyberError::WrongReceiver
         );
-        let amount = price;
+        let amount = amount;
 
         let cpi_ctx = CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
@@ -83,7 +83,7 @@ pub mod payment_processor {
 
         emit!(OperationPaid {
             payment_type: payment_type.clone(),
-            payment_mint: op.accepted_mint,
+            payment_mint: op.payment_token,
             payment_id,
             payment_amount: amount,
             payer: ctx.accounts.payer.key(),
@@ -111,7 +111,7 @@ pub struct Initialize<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(payment_type: String, accepted_mint: Pubkey)]
+#[instruction(payment_type: String, payment_token: Pubkey)]
 pub struct SetPaymentType<'info> {
     #[account(
         mut,
@@ -153,7 +153,7 @@ pub struct Pay<'info> {
 
     #[account(
         mut,
-        token::mint = operation.accepted_mint,
+        token::mint = operation.payment_token,
         token::authority = payer,
     )]
     pub user_payment_token: Account<'info, TokenAccount>,
@@ -163,7 +163,7 @@ pub struct Pay<'info> {
 
     #[account(
         mut,
-        token::mint = operation.accepted_mint,
+        token::mint = operation.payment_token,
     )]
     pub receiver_token: Account<'info, TokenAccount>,
 
@@ -186,7 +186,7 @@ pub struct Operation {
     #[max_len(32)]
     pub payment_type: String,
     pub payment_amount: u64,
-    pub accepted_mint: Pubkey,
+    pub payment_token: Pubkey,
 }
 
 #[event]
