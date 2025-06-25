@@ -49,18 +49,14 @@ pub mod payment_processor {
     ) -> Result<()> {
         let op = &ctx.accounts.operation;
 
-        require_keys_eq!(
-            ctx.accounts.payer_ata.mint,
-            op.payment_token,
-            XyberError::UnsupportedMint
-        );
-        require_keys_eq!(
-            ctx.accounts.agent_ata.mint,
-            op.payment_token,
-            XyberError::UnsupportedMint
-        );
-
-        require!(amount == op.payment_amount, XyberError::PriceMismatch);
+        
+        // Only enforce strict price match if a price is set (> 0)
+        if op.payment_amount > 0 {
+            require!(
+                amount == op.payment_amount,
+                XyberError::PriceMismatch
+            );
+        }
         require_keys_eq!(
             ctx.accounts.agent_ata.owner,
             ctx.accounts.agent_wallet.key(),

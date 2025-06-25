@@ -151,16 +151,6 @@ export default {
             }
         }
 
-        // TODO: not used as we switched to string from u64
-        // async function getAllOperations(max = 20) {
-        //     const out: { paymentType: number; data: any }[] = [];
-        //     for (let i = 0; i < max; i++) {
-        //         const { operation } = await getOperation(i);
-        //         if (operation) out.push({ paymentType: i, data: operation });
-        //     }
-        //     return out;
-        // }
-
         return {
             getGlobalConfigPda,
             getOperationPda,
