@@ -55,14 +55,14 @@ pub mod payment_processor {
             XyberError::UnsupportedMint
         );
         require_keys_eq!(
-            ctx.accounts.receiver_token.mint,
+            ctx.accounts.agent_ata.mint,
             op.payment_token,
             XyberError::UnsupportedMint
         );
 
         require!(amount == op.payment_amount, XyberError::PriceMismatch);
         require_keys_eq!(
-            ctx.accounts.receiver_token.owner,
+            ctx.accounts.agent_ata.owner,
             ctx.accounts.agent_wallet.key(),
             XyberError::WrongReceiver
         );
@@ -72,7 +72,7 @@ pub mod payment_processor {
             ctx.accounts.token_program.to_account_info(),
             Transfer {
                 from: ctx.accounts.payer_ata.to_account_info(),
-                to: ctx.accounts.receiver_token.to_account_info(),
+                to: ctx.accounts.agent_ata.to_account_info(),
                 authority: ctx.accounts.payer.to_account_info(),
             },
         );
@@ -161,8 +161,10 @@ pub struct Pay<'info> {
     #[account(
         mut,
         token::mint = operation.payment_token,
+        token::authority = agent_wallet,
+        token::token_program = token_program,
     )]
-    pub receiver_token: Account<'info, TokenAccount>,
+    pub agent_ata: Account<'info, TokenAccount>,
 
     #[account(mut)]
     pub payer: Signer<'info>,

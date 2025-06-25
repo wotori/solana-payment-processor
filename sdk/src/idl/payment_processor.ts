@@ -139,14 +139,14 @@ export type PaymentProcessor = {
           }
         },
         {
-          "name": "userPaymentToken",
+          "name": "payerAta",
           "writable": true
         },
         {
           "name": "agentWallet"
         },
         {
-          "name": "receiverToken",
+          "name": "agentAta",
           "writable": true
         },
         {

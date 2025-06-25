@@ -119,7 +119,7 @@ export default {
                     operation: operationPda,
                     payerAta: userToken,
                     agentWallet,
-                    receiverToken,
+                    agentAta: receiverToken,
                     payer,
                     tokenProgram: TOKEN_PROGRAM_ID,
                 })

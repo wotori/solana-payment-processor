@@ -133,14 +133,14 @@
           }
         },
         {
-          "name": "user_payment_token",
+          "name": "payer_ata",
           "writable": true
         },
         {
           "name": "agent_wallet"
         },
         {
-          "name": "receiver_token",
+          "name": "agent_ata",
           "writable": true
         },
         {
