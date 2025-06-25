@@ -105,7 +105,7 @@ pub struct Initialize<'info> {
         seeds = [b"global-config"],
         bump,
         payer = admin,
-        space = 8 + GlobalConfig::SIZE,
+        space = 8 + GlobalConfig::INIT_SPACE,
     )]
     pub global_config: Account<'info, GlobalConfig>,
 
@@ -131,7 +131,7 @@ pub struct SetOperation<'info> {
         payer = admin,
         seeds = [b"operation", payment_type.as_bytes().as_ref()],
         bump,
-        space = 8 + Operation::SIZE,
+        space = 8 + Operation::INIT_SPACE,
     )]
     pub operation: Account<'info, Operation>,
 
@@ -179,30 +179,21 @@ pub struct Pay<'info> {
 }
 
 #[account]
+#[derive(InitSpace)]
 pub struct GlobalConfig {
     pub admin: Pubkey,
     pub bump: u8,
 }
 
-impl GlobalConfig {
-    const SIZE: usize = 32 + 1;
-}
-
 #[account]
+#[derive(InitSpace)]
 pub struct Operation {
+    #[max_len(32)]
     pub payment_type: String,
     pub payment_amount: u64,
     pub accepted_mint: Pubkey,
     pub agent_token: Pubkey,
     pub bump: u8,
-}
-
-impl Operation {
-    pub const SIZE: usize = 4 + 32        // payment_type (len + up to 32 bytes)
-        + 8                                // payment_amount
-        + 32                               // accepted_mint
-        + 32                               // agent_token
-        + 1;                               // bump
 }
 
 #[event]
