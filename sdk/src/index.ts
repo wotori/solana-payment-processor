@@ -54,7 +54,6 @@ export default {
             paymentType: string;
             paymentAmount: anchor.BN;
             acceptedMint: PublicKey;
-            agentToken: PublicKey;
         }): Promise<{ signature: string; operationPda: PublicKey }> {
             const [operationPda] = getOperationPda(args.paymentType);
             const [globalConfigPda] = getGlobalConfigPda();
@@ -64,7 +63,6 @@ export default {
                     args.paymentType,
                     args.paymentAmount,
                     args.acceptedMint,
-                    args.agentToken,
                 )
                 .accountsStrict({
                     globalConfig: globalConfigPda,

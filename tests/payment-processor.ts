@@ -54,13 +54,11 @@ describe("payment‑processor (SDK)", () => {
   it("registers an operation via SDK", async () => {
     const paymentType = "1";
     const paymentAmount = new anchor.BN(2_000_000); // 2 tokens
-    const agentToken = Keypair.generate().publicKey;
 
     const { signature } = await sdk.setPaymentType({
       paymentType,
       paymentAmount,
       acceptedMint,
-      agentToken,
     });
     console.log("setPaymentType tx:", signature);
 
@@ -71,7 +69,6 @@ describe("payment‑processor (SDK)", () => {
       paymentAmount.toNumber(),
     );
     expect(operation.acceptedMint.toBase58()).to.equal(acceptedMint.toBase58());
-    expect(operation.agentToken.toBase58()).to.equal(agentToken.toBase58());
   });
 
   it("processes a payment and transfers funds", async () => {

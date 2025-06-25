@@ -266,10 +266,6 @@
         {
           "name": "accepted_mint",
           "type": "pubkey"
-        },
-        {
-          "name": "agent_token",
-          "type": "pubkey"
         }
       ]
     }
@@ -385,14 +381,6 @@
           {
             "name": "accepted_mint",
             "type": "pubkey"
-          },
-          {
-            "name": "agent_token",
-            "type": "pubkey"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
           }
         ]
       }
@@ -405,10 +393,6 @@
           {
             "name": "payment_amount",
             "type": "u64"
-          },
-          {
-            "name": "agent_token",
-            "type": "pubkey"
           }
         ]
       }

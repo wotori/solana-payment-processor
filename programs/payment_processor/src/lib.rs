@@ -31,18 +31,14 @@ pub mod payment_processor {
         payment_type: String,
         payment_amount: u64,
         accepted_mint: Pubkey,
-        agent_token: Pubkey,
     ) -> Result<()> {
         let operation = &mut ctx.accounts.operation;
         operation.payment_type = payment_type;
         operation.payment_amount = payment_amount;
         operation.accepted_mint = accepted_mint;
-        operation.agent_token = agent_token;
-        operation.bump = ctx.bumps.operation;
 
         emit!(OperationAdded {
             payment_amount,
-            agent_token,
         });
         Ok(())
     }
@@ -115,7 +111,7 @@ pub struct Initialize<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(payment_type: String)]
+#[instruction(payment_type: String, accepted_mint: Pubkey)]
 pub struct SetPaymentType<'info> {
     #[account(
         mut,
@@ -150,8 +146,8 @@ pub struct Pay<'info> {
     pub global_config: Account<'info, GlobalConfig>,
 
     #[account(
-        seeds = [b"operation", payment_type.as_bytes().as_ref()],
-        bump = operation.bump,
+    seeds = [b"operation", payment_type.as_bytes().as_ref()],
+    bump,
     )]
     pub operation: Account<'info, Operation>,
 
@@ -191,8 +187,6 @@ pub struct Operation {
     pub payment_type: String,
     pub payment_amount: u64,
     pub accepted_mint: Pubkey,
-    pub agent_token: Pubkey,
-    pub bump: u8,
 }
 
 #[event]
@@ -208,7 +202,6 @@ pub struct OperationPaid {
 #[event]
 pub struct OperationAdded {
     pub payment_amount: u64,
-    pub agent_token: Pubkey,
 }
 
 #[error_code]

@@ -272,10 +272,6 @@ export type PaymentProcessor = {
         {
           "name": "acceptedMint",
           "type": "pubkey"
-        },
-        {
-          "name": "agentToken",
-          "type": "pubkey"
         }
       ]
     }
@@ -391,14 +387,6 @@ export type PaymentProcessor = {
           {
             "name": "acceptedMint",
             "type": "pubkey"
-          },
-          {
-            "name": "agentToken",
-            "type": "pubkey"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
           }
         ]
       }
@@ -411,10 +399,6 @@ export type PaymentProcessor = {
           {
             "name": "paymentAmount",
             "type": "u64"
-          },
-          {
-            "name": "agentToken",
-            "type": "pubkey"
           }
         ]
       }
