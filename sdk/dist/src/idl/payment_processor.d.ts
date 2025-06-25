@@ -146,7 +146,7 @@ export type PaymentProcessor = {
                     "name": "agentWallet";
                 },
                 {
-                    "name": "receiverToken";
+                    "name": "agentAta";
                     "writable": true;
                 },
                 {
@@ -165,7 +165,7 @@ export type PaymentProcessor = {
                     "type": "string";
                 },
                 {
-                    "name": "price";
+                    "name": "amount";
                     "type": "u64";
                 },
                 {
@@ -180,19 +180,19 @@ export type PaymentProcessor = {
             ];
         },
         {
-            "name": "setOperation";
+            "name": "setPaymentType";
             "docs": [
                 "Register or update an operation that users can purchase."
             ];
             "discriminator": [
-                41,
-                217,
-                83,
-                153,
-                61,
-                159,
-                14,
-                101
+                51,
+                107,
+                40,
+                148,
+                222,
+                186,
+                109,
+                72
             ];
             "accounts": [
                 {
@@ -271,10 +271,6 @@ export type PaymentProcessor = {
                 },
                 {
                     "name": "paymentToken";
-                    "type": "pubkey";
-                },
-                {
-                    "name": "agentToken";
                     "type": "pubkey";
                 }
             ];
@@ -367,10 +363,6 @@ export type PaymentProcessor = {
                     {
                         "name": "admin";
                         "type": "pubkey";
-                    },
-                    {
-                        "name": "bump";
-                        "type": "u8";
                     }
                 ];
             };
@@ -391,14 +383,6 @@ export type PaymentProcessor = {
                     {
                         "name": "paymentToken";
                         "type": "pubkey";
-                    },
-                    {
-                        "name": "agentToken";
-                        "type": "pubkey";
-                    },
-                    {
-                        "name": "bump";
-                        "type": "u8";
                     }
                 ];
             };
@@ -411,14 +395,6 @@ export type PaymentProcessor = {
                     {
                         "name": "paymentAmount";
                         "type": "u64";
-                    },
-                    {
-                        "name": "agentToken";
-                        "type": "pubkey";
-                    },
-                    {
-                        "name": "caller";
-                        "type": "pubkey";
                     }
                 ];
             };

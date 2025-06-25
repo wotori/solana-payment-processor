@@ -85,7 +85,7 @@ exports.default = {
                 const [operationPda] = getOperationPda(args.paymentType);
                 const [globalConfigPda] = getGlobalConfigPda();
                 const signature = yield program.methods
-                    .setPaymentType(args.paymentType, args.paymentAmount, args.paymentToken, args.agentToken)
+                    .setPaymentType(args.paymentType, args.paymentAmount, args.paymentToken)
                     .accountsStrict({
                     globalConfig: globalConfigPda,
                     operation: operationPda,
@@ -120,7 +120,7 @@ exports.default = {
                     operation: operationPda,
                     payerAta: userToken,
                     agentWallet,
-                    receiverToken,
+                    agentAta: receiverToken,
                     payer,
                     tokenProgram: spl_token_1.TOKEN_PROGRAM_ID,
                 })
@@ -152,15 +152,6 @@ exports.default = {
                 }
             });
         }
-        // TODO: not used as we switched to string from u64
-        // async function getAllOperations(max = 20) {
-        //     const out: { paymentType: number; data: any }[] = [];
-        //     for (let i = 0; i < max; i++) {
-        //         const { operation } = await getOperation(i);
-        //         if (operation) out.push({ paymentType: i, data: operation });
-        //     }
-        //     return out;
-        // }
         return {
             getGlobalConfigPda,
             getOperationPda,
