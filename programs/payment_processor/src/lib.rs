@@ -21,7 +21,6 @@ pub mod payment_processor {
             );
         }
         cfg.admin = new_admin;
-        cfg.bump = ctx.bumps.global_config;
         Ok(())
     }
 
@@ -116,7 +115,7 @@ pub struct SetPaymentType<'info> {
     #[account(
         mut,
         seeds = [b"global-config"],
-        bump = global_config.bump,
+        bump,
         has_one = admin @ XyberError::Unauthorized,
     )]
     pub global_config: Account<'info, GlobalConfig>,
@@ -141,7 +140,7 @@ pub struct SetPaymentType<'info> {
 pub struct Pay<'info> {
     #[account(
         seeds = [b"global-config"],
-        bump = global_config.bump,
+        bump,
     )]
     pub global_config: Account<'info, GlobalConfig>,
 
@@ -177,7 +176,6 @@ pub struct Pay<'info> {
 #[derive(InitSpace)]
 pub struct GlobalConfig {
     pub admin: Pubkey,
-    pub bump: u8,
 }
 
 #[account]
