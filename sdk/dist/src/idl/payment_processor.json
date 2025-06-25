@@ -133,7 +133,7 @@
                     }
                 },
                 {
-                    "name": "user_payment_token",
+                    "name": "payer_ata",
                     "writable": true
                 },
                 {

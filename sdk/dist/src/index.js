@@ -104,7 +104,7 @@ exports.default = {
                     throw new Error("Operation not found");
                 const paymentToken = operation.paymentToken;
                 const agentWallet = args.agentWallet;
-                const userToken = (_a = args.userPaymentToken) !== null && _a !== void 0 ? _a : (0, spl_token_1.getAssociatedTokenAddressSync)(paymentToken, payer);
+                const userToken = (_a = args.payerAta) !== null && _a !== void 0 ? _a : (0, spl_token_1.getAssociatedTokenAddressSync)(paymentToken, payer);
                 const receiverToken = (_b = args.receiverToken) !== null && _b !== void 0 ? _b : (0, spl_token_1.getAssociatedTokenAddressSync)(paymentToken, agentWallet, true);
                 const [globalConfigPda] = getGlobalConfigPda();
                 const [operationPda] = getOperationPda(args.paymentType);
@@ -118,7 +118,7 @@ exports.default = {
                     .accountsStrict({
                     globalConfig: globalConfigPda,
                     operation: operationPda,
-                    userPaymentToken: userToken,
+                    payerAta: userToken,
                     agentWallet,
                     receiverToken,
                     payer,

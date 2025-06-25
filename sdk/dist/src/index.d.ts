@@ -189,7 +189,7 @@ declare const _default: {
             price: anchor.BN | number;
             agentWallet: PublicKey;
             paymentId: Uint8Array | number[] | Buffer;
-            userPaymentToken?: PublicKey;
+            payerAta?: PublicKey;
             receiverToken?: PublicKey;
         }) => Promise<{
             signature: string;

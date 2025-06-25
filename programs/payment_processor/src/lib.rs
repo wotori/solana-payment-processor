@@ -36,9 +36,7 @@ pub mod payment_processor {
         operation.payment_amount = payment_amount;
         operation.payment_token = payment_token;
 
-        emit!(OperationAdded {
-            payment_amount,
-        });
+        emit!(OperationAdded { payment_amount });
         Ok(())
     }
 
@@ -52,7 +50,7 @@ pub mod payment_processor {
         let op = &ctx.accounts.operation;
 
         require_keys_eq!(
-            ctx.accounts.user_payment_token.mint,
+            ctx.accounts.payer_ata.mint,
             op.payment_token,
             XyberError::UnsupportedMint
         );
@@ -73,7 +71,7 @@ pub mod payment_processor {
         let cpi_ctx = CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
             Transfer {
-                from: ctx.accounts.user_payment_token.to_account_info(),
+                from: ctx.accounts.payer_ata.to_account_info(),
                 to: ctx.accounts.receiver_token.to_account_info(),
                 authority: ctx.accounts.payer.to_account_info(),
             },
@@ -123,7 +121,7 @@ pub struct SetPaymentType<'info> {
     #[account(
         init_if_needed,
         payer = admin,
-        seeds = [b"operation", payment_type.as_bytes().as_ref()],
+        seeds = [b"operation", payment_type.as_bytes()],
         bump,
         space = 8 + Operation::INIT_SPACE,
     )]
@@ -155,7 +153,7 @@ pub struct Pay<'info> {
         token::mint = operation.payment_token,
         token::authority = payer,
     )]
-    pub user_payment_token: Account<'info, TokenAccount>,
+    pub payer_ata: Account<'info, TokenAccount>,
 
     /// CHECK: Wallet that will receive the payment
     pub agent_wallet: UncheckedAccount<'info>,

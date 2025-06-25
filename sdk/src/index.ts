@@ -80,7 +80,7 @@ export default {
             price: anchor.BN | number;
             agentWallet: PublicKey;
             paymentId: Uint8Array | number[] | Buffer;
-            userPaymentToken?: PublicKey;
+            payerAta?: PublicKey;
             receiverToken?: PublicKey;
         }): Promise<{ signature: string }> {
             const { operation } = await getOperation(args.paymentType);
@@ -90,7 +90,7 @@ export default {
             const agentWallet = args.agentWallet;
 
             const userToken =
-                args.userPaymentToken ??
+                args.payerAta ??
                 getAssociatedTokenAddressSync(paymentToken, payer);
 
             const receiverToken =
@@ -117,7 +117,7 @@ export default {
                 .accountsStrict({
                     globalConfig: globalConfigPda,
                     operation: operationPda,
-                    userPaymentToken: userToken,
+                    payerAta: userToken,
                     agentWallet,
                     receiverToken,
                     payer,

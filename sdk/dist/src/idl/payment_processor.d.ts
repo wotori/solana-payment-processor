@@ -139,7 +139,7 @@ export type PaymentProcessor = {
                     };
                 },
                 {
-                    "name": "userPaymentToken";
+                    "name": "payerAta";
                     "writable": true;
                 },
                 {

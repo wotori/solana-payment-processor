@@ -112,7 +112,7 @@ describe("payment‑processor (SDK)", () => {
       price: 2_000_000, // must match operation.paymentAmount
       agentWallet: agentWallet.publicKey,
       paymentId,
-      userPaymentToken: userAta,
+      payerAta: userAta,
       receiverToken: receiverAta,
     });
     console.log("pay tx:", signature);

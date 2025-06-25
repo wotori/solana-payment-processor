@@ -357,10 +357,6 @@
           {
             "name": "admin",
             "type": "pubkey"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
           }
         ]
       }

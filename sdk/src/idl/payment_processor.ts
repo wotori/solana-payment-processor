@@ -363,10 +363,6 @@ export type PaymentProcessor = {
           {
             "name": "admin",
             "type": "pubkey"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
           }
         ]
       }
