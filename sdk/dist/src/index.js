@@ -80,12 +80,12 @@ exports.default = {
                 return { signature, globalConfigPda };
             });
         }
-        function setOperation(args) {
+        function setPaymentType(args) {
             return __awaiter(this, void 0, void 0, function* () {
                 const [operationPda] = getOperationPda(args.paymentType);
                 const [globalConfigPda] = getGlobalConfigPda();
                 const signature = yield program.methods
-                    .setOperation(args.paymentType, args.paymentAmount, args.acceptedMint, args.agentToken)
+                    .setPaymentType(args.paymentType, args.paymentAmount, args.acceptedMint, args.agentToken)
                     .accountsStrict({
                     globalConfig: globalConfigPda,
                     operation: operationPda,
@@ -165,7 +165,7 @@ exports.default = {
             getGlobalConfigPda,
             getOperationPda,
             initialize,
-            setOperation,
+            setPaymentType,
             pay,
             getGlobalConfig,
             getOperation,

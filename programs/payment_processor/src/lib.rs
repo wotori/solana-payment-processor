@@ -26,15 +26,15 @@ pub mod payment_processor {
     }
 
     /// Register or update an operation that users can purchase.
-    pub fn set_operation(
-        ctx: Context<SetOperation>,
+    pub fn set_payment_type(
+        ctx: Context<SetPaymentType>,
         payment_type: String,
         payment_amount: u64,
         accepted_mint: Pubkey,
         agent_token: Pubkey,
     ) -> Result<()> {
         let operation = &mut ctx.accounts.operation;
-        operation.payment_type = payment_type.clone();
+        operation.payment_type = payment_type;
         operation.payment_amount = payment_amount;
         operation.accepted_mint = accepted_mint;
         operation.agent_token = agent_token;
@@ -43,7 +43,6 @@ pub mod payment_processor {
         emit!(OperationAdded {
             payment_amount,
             agent_token,
-            caller: ctx.accounts.admin.key(),
         });
         Ok(())
     }
@@ -117,7 +116,7 @@ pub struct Initialize<'info> {
 
 #[derive(Accounts)]
 #[instruction(payment_type: String)]
-pub struct SetOperation<'info> {
+pub struct SetPaymentType<'info> {
     #[account(
         mut,
         seeds = [b"global-config"],
@@ -210,7 +209,6 @@ pub struct OperationPaid {
 pub struct OperationAdded {
     pub payment_amount: u64,
     pub agent_token: Pubkey,
-    pub caller: Pubkey,
 }
 
 #[error_code]

@@ -50,7 +50,7 @@ export default {
             return { signature, globalConfigPda };
         }
 
-        async function setOperation(args: {
+        async function setPaymentType(args: {
             paymentType: string;
             paymentAmount: anchor.BN;
             acceptedMint: PublicKey;
@@ -60,7 +60,7 @@ export default {
             const [globalConfigPda] = getGlobalConfigPda();
 
             const signature = await program.methods
-                .setOperation(
+                .setPaymentType(
                     args.paymentType,
                     args.paymentAmount,
                     args.acceptedMint,
@@ -167,7 +167,7 @@ export default {
             getGlobalConfigPda,
             getOperationPda,
             initialize,
-            setOperation,
+            setPaymentType,
             pay,
             getGlobalConfig,
             getOperation,

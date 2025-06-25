@@ -174,19 +174,19 @@
       ]
     },
     {
-      "name": "set_operation",
+      "name": "set_payment_type",
       "docs": [
         "Register or update an operation that users can purchase."
       ],
       "discriminator": [
-        41,
-        217,
-        83,
-        153,
-        61,
-        159,
-        14,
-        101
+        51,
+        107,
+        40,
+        148,
+        222,
+        186,
+        109,
+        72
       ],
       "accounts": [
         {
@@ -408,10 +408,6 @@
           },
           {
             "name": "agent_token",
-            "type": "pubkey"
-          },
-          {
-            "name": "caller",
             "type": "pubkey"
           }
         ]

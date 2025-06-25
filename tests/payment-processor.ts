@@ -56,13 +56,13 @@ describe("payment‑processor (SDK)", () => {
     const paymentAmount = new anchor.BN(2_000_000); // 2 tokens
     const agentToken = Keypair.generate().publicKey;
 
-    const { signature } = await sdk.setOperation({
+    const { signature } = await sdk.setPaymentType({
       paymentType,
       paymentAmount,
       acceptedMint,
       agentToken,
     });
-    console.log("setOperation tx:", signature);
+    console.log("setPaymentType tx:", signature);
 
     const { operation } = await sdk.getOperation(paymentType);
     if (!operation) throw new Error("Operation not found");

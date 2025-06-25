@@ -180,19 +180,19 @@ export type PaymentProcessor = {
       ]
     },
     {
-      "name": "setOperation",
+      "name": "setPaymentType",
       "docs": [
         "Register or update an operation that users can purchase."
       ],
       "discriminator": [
-        41,
-        217,
-        83,
-        153,
-        61,
-        159,
-        14,
-        101
+        51,
+        107,
+        40,
+        148,
+        222,
+        186,
+        109,
+        72
       ],
       "accounts": [
         {
@@ -414,10 +414,6 @@ export type PaymentProcessor = {
           },
           {
             "name": "agentToken",
-            "type": "pubkey"
-          },
-          {
-            "name": "caller",
             "type": "pubkey"
           }
         ]

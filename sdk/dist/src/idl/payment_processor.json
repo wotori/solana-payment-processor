@@ -174,7 +174,7 @@
             ]
         },
         {
-            "name": "set_operation",
+            "name": "set_payment_type",
             "docs": [
                 "Register or update an operation that users can purchase."
             ],
