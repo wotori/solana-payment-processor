@@ -49,20 +49,15 @@ pub mod payment_processor {
     ) -> Result<()> {
         let op = &ctx.accounts.operation;
 
-        
         // Only enforce strict price match if a price is set (> 0)
         if op.payment_amount > 0 {
-            require!(
-                amount == op.payment_amount,
-                XyberError::PriceMismatch
-            );
+            require!(amount == op.payment_amount, XyberError::PriceMismatch);
         }
         require_keys_eq!(
             ctx.accounts.agent_ata.owner,
             ctx.accounts.agent_wallet.key(),
             XyberError::WrongReceiver
         );
-        let amount = amount;
 
         let cpi_ctx = CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
@@ -139,7 +134,7 @@ pub struct Pay<'info> {
     pub global_config: Account<'info, GlobalConfig>,
 
     #[account(
-    seeds = [b"operation", payment_type.as_bytes().as_ref()],
+    seeds = [b"operation", payment_type.as_bytes()],
     bump,
     )]
     pub operation: Account<'info, Operation>,
