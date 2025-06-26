@@ -28,7 +28,7 @@ pub mod payment_processor {
     pub fn set_payment_type(
         ctx: Context<SetPaymentType>,
         payment_type: String,
-        payment_amount: u64,
+        payment_amount: Option<u64>,
         payment_token: Pubkey,
     ) -> Result<()> {
         let operation = &mut ctx.accounts.operation;
@@ -49,9 +49,9 @@ pub mod payment_processor {
     ) -> Result<()> {
         let op = &ctx.accounts.operation;
 
-        // Only enforce strict price match if a price is set (> 0)
-        if op.payment_amount > 0 {
-            require!(amount == op.payment_amount, XyberError::PriceMismatch);
+        // Enforce price match only when a price is configured
+        if let Some(expected) = op.payment_amount {
+            require!(amount == expected, XyberError::PriceMismatch);
         }
         require_keys_eq!(
             ctx.accounts.agent_ata.owner,
@@ -174,7 +174,7 @@ pub struct GlobalConfig {
 pub struct Operation {
     #[max_len(32)]
     pub payment_type: String,
-    pub payment_amount: u64,
+    pub payment_amount: Option<u64>,
     pub payment_token: Pubkey,
 }
 
@@ -190,7 +190,7 @@ pub struct OperationPaid {
 
 #[event]
 pub struct OperationAdded {
-    pub payment_amount: u64,
+    pub payment_amount: Option<u64>,
 }
 
 #[error_code]
