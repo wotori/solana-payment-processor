@@ -24,6 +24,11 @@
       ],
       "accounts": [
         {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "global_config",
           "writable": true,
           "pda": {
@@ -48,11 +53,6 @@
               }
             ]
           }
-        },
-        {
-          "name": "admin",
-          "writable": true,
-          "signer": true
         },
         {
           "name": "system_program",
@@ -261,7 +261,9 @@
         },
         {
           "name": "payment_amount",
-          "type": "u64"
+          "type": {
+            "option": "u64"
+          }
         },
         {
           "name": "payment_token",
@@ -372,7 +374,9 @@
           },
           {
             "name": "payment_amount",
-            "type": "u64"
+            "type": {
+              "option": "u64"
+            }
           },
           {
             "name": "payment_token",
@@ -388,7 +392,9 @@
         "fields": [
           {
             "name": "payment_amount",
-            "type": "u64"
+            "type": {
+              "option": "u64"
+            }
           }
         ]
       }

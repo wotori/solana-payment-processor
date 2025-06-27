@@ -12,14 +12,7 @@ pub mod payment_processor {
     /// One-time program initialization by the admin.
     pub fn initialize(ctx: Context<Initialize>, new_admin: Pubkey) -> Result<()> {
         let cfg = &mut ctx.accounts.global_config;
-        // Allow re-initialization only by the current admin
-        if cfg.admin != Pubkey::default() {
-            require_keys_eq!(
-                cfg.admin,
-                ctx.accounts.admin.key(),
-                XyberError::Unauthorized
-            );
-        }
+        // Authorization constraint enforced declaratively on the admin account
         cfg.admin = new_admin;
         Ok(())
     }
@@ -84,6 +77,13 @@ pub mod payment_processor {
 #[derive(Accounts)]
 pub struct Initialize<'info> {
     #[account(
+        mut,
+        constraint = global_config.admin == Pubkey::default()
+            || admin.key() == global_config.admin @ XyberError::Unauthorized
+    )]
+    pub admin: Signer<'info>,
+
+    #[account(
         init_if_needed,
         seeds = [b"global-config"],
         bump,
@@ -91,9 +91,6 @@ pub struct Initialize<'info> {
         space = 8 + GlobalConfig::INIT_SPACE,
     )]
     pub global_config: Account<'info, GlobalConfig>,
-
-    #[account(mut)]
-    pub admin: Signer<'info>,
 
     pub system_program: Program<'info, System>,
 }

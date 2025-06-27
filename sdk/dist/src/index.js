@@ -160,7 +160,6 @@ exports.default = {
             pay,
             getGlobalConfig,
             getOperation,
-            // getAllOperations,
         };
     },
 };

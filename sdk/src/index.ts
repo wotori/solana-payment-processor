@@ -159,7 +159,6 @@ export default {
             pay,
             getGlobalConfig,
             getOperation,
-            // getAllOperations,
         };
     },
 };

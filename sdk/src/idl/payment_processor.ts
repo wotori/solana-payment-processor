@@ -30,6 +30,11 @@ export type PaymentProcessor = {
       ],
       "accounts": [
         {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "globalConfig",
           "writable": true,
           "pda": {
@@ -54,11 +59,6 @@ export type PaymentProcessor = {
               }
             ]
           }
-        },
-        {
-          "name": "admin",
-          "writable": true,
-          "signer": true
         },
         {
           "name": "systemProgram",
@@ -267,7 +267,9 @@ export type PaymentProcessor = {
         },
         {
           "name": "paymentAmount",
-          "type": "u64"
+          "type": {
+            "option": "u64"
+          }
         },
         {
           "name": "paymentToken",
@@ -378,7 +380,9 @@ export type PaymentProcessor = {
           },
           {
             "name": "paymentAmount",
-            "type": "u64"
+            "type": {
+              "option": "u64"
+            }
           },
           {
             "name": "paymentToken",
@@ -394,7 +398,9 @@ export type PaymentProcessor = {
         "fields": [
           {
             "name": "paymentAmount",
-            "type": "u64"
+            "type": {
+              "option": "u64"
+            }
           }
         ]
       }
