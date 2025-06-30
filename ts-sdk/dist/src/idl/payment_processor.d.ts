@@ -266,7 +266,7 @@ export type PaymentProcessor = {
                     "type": "string";
                 },
                 {
-                    "name": "paymentAmount";
+                    "name": "amount";
                     "type": {
                         "option": "u64";
                     };
@@ -392,7 +392,7 @@ export type PaymentProcessor = {
                         };
                     },
                     {
-                        "name": "paymentAmount";
+                        "name": "amount";
                         "type": "u64";
                     },
                     {

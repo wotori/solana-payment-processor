@@ -53,11 +53,11 @@ describe("payment‑processor (SDK)", () => {
 
   it("registers an operation via SDK", async () => {
     const paymentType = "1";
-    const paymentAmount = new anchor.BN(2_000_000); // 2 tokens
+    const amount = new anchor.BN(2_000_000); // 2 tokens
 
     const { signature } = await sdk.setPaymentType({
       paymentType,
-      paymentAmount,
+      amount,
       token,
     });
     console.log("setPaymentType tx:", signature);
@@ -66,7 +66,7 @@ describe("payment‑processor (SDK)", () => {
     if (!operation) throw new Error("Operation not found");
 
     expect(operation.amount.toNumber()).to.equal(
-      paymentAmount.toNumber(),
+      amount.toNumber(),
     );
     expect(operation.token.toBase58()).to.equal(token.toBase58());
   });
@@ -126,12 +126,12 @@ describe("payment‑processor (SDK)", () => {
   });
 });
 
-  it("re-initializes the global config with same admin", async () => {
-    const { signature } = await sdk.initialize(provider.publicKey);
-    console.log("re-initialize tx:", signature);
+it("re-initializes the global config with same admin", async () => {
+  const { signature } = await sdk.initialize(provider.publicKey);
+  console.log("re-initialize tx:", signature);
 
-    const { globalConfig } = await sdk.getGlobalConfig();
-    if (!globalConfig) throw new Error("GlobalConfig not found after re-init");
+  const { globalConfig } = await sdk.getGlobalConfig();
+  if (!globalConfig) throw new Error("GlobalConfig not found after re-init");
 
-    expect(globalConfig.admin.toBase58()).to.equal(provider.publicKey.toBase58());
-  });
+  expect(globalConfig.admin.toBase58()).to.equal(provider.publicKey.toBase58());
+});

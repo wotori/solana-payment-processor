@@ -27,17 +27,17 @@ pub mod payment_processor {
     pub fn set_payment_type(
         ctx: Context<SetPaymentType>,
         payment_type_name: String,
-        payment_amount: Option<u64>,
+        amount: Option<u64>,
         token: Pubkey,
     ) -> Result<()> {
         let payment_type = &mut ctx.accounts.payment_type;
         payment_type.name = payment_type_name.clone();
-        payment_type.amount = payment_amount;
+        payment_type.amount = amount;
         payment_type.token = token;
 
         emit!(PaymentTypeAdded {
             payment_type: payment_type_name,
-            price: payment_amount,
+            amount: amount,
             token: token
         });
         Ok(())
@@ -71,7 +71,7 @@ pub mod payment_processor {
             name: payment_type.clone(),
             payment_mint: op.token,
             payment_id,
-            payment_amount: amount,
+            amount: amount,
             payer: ctx.accounts.payer.key(),
             agent_wallet: ctx.accounts.agent_wallet.key(),
         });
@@ -186,7 +186,7 @@ pub struct OperationPaid {
     pub name: String,
     pub payment_mint: Pubkey,
     pub payment_id: [u8; 32],
-    pub payment_amount: u64,
+    pub amount: u64,
     pub payer: Pubkey,
     pub agent_wallet: Pubkey,
 }
@@ -194,7 +194,7 @@ pub struct OperationPaid {
 #[event]
 pub struct PaymentTypeAdded {
     pub payment_type: String,
-    pub price: Option<u64>,
+    pub amount: Option<u64>,
     pub token: Pubkey,
 }
 

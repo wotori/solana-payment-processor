@@ -260,7 +260,7 @@
           "type": "string"
         },
         {
-          "name": "payment_amount",
+          "name": "amount",
           "type": {
             "option": "u64"
           }
@@ -386,7 +386,7 @@
             }
           },
           {
-            "name": "payment_amount",
+            "name": "amount",
             "type": "u64"
           },
           {

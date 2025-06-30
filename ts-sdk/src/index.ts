@@ -59,7 +59,7 @@ export default {
 
         async function setPaymentType(args: {
             paymentType: string;
-            paymentAmount: anchor.BN;
+            amount: anchor.BN;
             token: PublicKey;
         }): Promise<{ signature: string; operationPda: PublicKey }> {
             const [operationPda] = getPaymentTypePda(args.paymentType);
@@ -68,7 +68,7 @@ export default {
             const signature = await program.methods
                 .setPaymentType(
                     args.paymentType,
-                    args.paymentAmount,
+                    args.amount,
                     args.token,
                 )
                 .accountsStrict({
