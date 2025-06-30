@@ -8,8 +8,8 @@ import {
   getAccount,
 } from "@solana/spl-token";
 
-import type { PaymentProcessor } from "../sdk/src";
-import processorSdk from "../sdk/src";
+import type { PaymentProcessor } from "../ts-sdk/src";
+import processorSdk from "../ts-sdk/src";
 import { expect } from "chai";
 
 const provider = anchor.AnchorProvider.env();
