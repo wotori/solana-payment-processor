@@ -209,7 +209,7 @@ declare const _default: {
         }>;
         pay: (args: {
             paymentType: string;
-            price: anchor.BN | number;
+            amount: anchor.BN | number;
             agentWallet: PublicKey;
             paymentId: Uint8Array | number[] | Buffer;
             payerAta?: PublicKey;

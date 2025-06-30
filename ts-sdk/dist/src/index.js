@@ -118,7 +118,7 @@ exports.default = {
                 if (pid.length !== 32)
                     throw new Error("paymentId must be exactly 32 bytes");
                 const signature = yield program.methods
-                    .pay(args.paymentType, new anchor.BN(args.price), Array.from(pid))
+                    .pay(args.paymentType, new anchor.BN(args.amount), Array.from(pid))
                     .accountsStrict({
                     globalConfig: globalConfigPda,
                     paymentType: operationPda,

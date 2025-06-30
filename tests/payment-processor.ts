@@ -109,7 +109,7 @@ describe("payment‑processor (SDK)", () => {
 
     const { signature } = await sdk.pay({
       paymentType,
-      price: 2_000_000, // must match operation.paymentAmount
+      amount: 2_000_000, // must match operation.price
       agentWallet: agentWallet.publicKey,
       paymentId,
       payerAta: userAta,
@@ -120,7 +120,7 @@ describe("payment‑processor (SDK)", () => {
     const userBalAfter = (await getAccount(provider.connection, userAta)).amount;
     const receiverBalAfter = (await getAccount(provider.connection, receiverAta)).amount;
 
-    // We registered paymentAmount = 2_000_000 (2 tokens)
+    // We registered price = 2_000_000 (2 tokens)
     expect(BigInt(userBalBefore) - BigInt(userBalAfter)).to.equal(2_000_000n);
     expect(BigInt(receiverBalAfter) - BigInt(receiverBalBefore)).to.equal(2_000_000n);
   });

@@ -84,7 +84,7 @@ export default {
 
         async function pay(args: {
             paymentType: string;
-            price: anchor.BN | number;
+            amount: anchor.BN | number;
             agentWallet: PublicKey;
             paymentId: Uint8Array | number[] | Buffer;
             payerAta?: PublicKey;
@@ -118,7 +118,7 @@ export default {
             const signature = await program.methods
                 .pay(
                     args.paymentType,
-                    new anchor.BN(args.price),
+                    new anchor.BN(args.amount),
                     Array.from(pid) as number[],
                 )
                 .accountsStrict({
