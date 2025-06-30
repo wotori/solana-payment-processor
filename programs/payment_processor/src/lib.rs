@@ -28,17 +28,17 @@ pub mod payment_processor {
         ctx: Context<SetPaymentType>,
         payment_type: String,
         payment_amount: Option<u64>,
-        payment_token: Pubkey,
+        token: Pubkey,
     ) -> Result<()> {
         let operation = &mut ctx.accounts.operation;
         operation.payment_type = payment_type.clone();
         operation.payment_amount = payment_amount;
-        operation.payment_token = payment_token;
+        operation.token = token;
 
         emit!(PaymentTypeAdded {
             payment_type,
             price: payment_amount,
-            token: payment_token
+            token: token
         });
         Ok(())
     }
@@ -69,7 +69,7 @@ pub mod payment_processor {
 
         emit!(OperationPaid {
             payment_type: payment_type.clone(),
-            payment_mint: op.payment_token,
+            payment_mint: op.token,
             payment_id,
             payment_amount: amount,
             payer: ctx.accounts.payer.key(),
@@ -101,7 +101,7 @@ pub struct Initialize<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(payment_type: String, payment_token: Pubkey)]
+#[instruction(payment_type: String, token: Pubkey)]
 pub struct SetPaymentType<'info> {
     #[account(
         mut,
@@ -143,7 +143,7 @@ pub struct Pay<'info> {
 
     #[account(
         mut,
-        token::mint = operation.payment_token,
+        token::mint = operation.token,
         token::authority = payer,
     )]
     pub payer_ata: Account<'info, TokenAccount>,
@@ -153,7 +153,7 @@ pub struct Pay<'info> {
 
     #[account(
         mut,
-        token::mint = operation.payment_token,
+        token::mint = operation.token,
         token::authority = agent_wallet,
         token::token_program = token_program,
         constraint = agent_ata.owner == agent_wallet.key() @ XyberError::WrongReceiver
@@ -178,7 +178,7 @@ pub struct Operation {
     #[max_len(32)]
     pub payment_type: String,
     pub payment_amount: Option<u64>,
-    pub payment_token: Pubkey,
+    pub token: Pubkey,
 }
 
 #[event]

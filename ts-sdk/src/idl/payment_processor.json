@@ -266,7 +266,7 @@
           }
         },
         {
-          "name": "payment_token",
+          "name": "token",
           "type": "pubkey"
         }
       ]
@@ -379,7 +379,7 @@
             }
           },
           {
-            "name": "payment_token",
+            "name": "token",
             "type": "pubkey"
           }
         ]

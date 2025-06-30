@@ -89,7 +89,7 @@ exports.default = {
                 const [operationPda] = getOperationPda(args.paymentType);
                 const [globalConfigPda] = getGlobalConfigPda();
                 const signature = yield program.methods
-                    .setPaymentType(args.paymentType, args.paymentAmount, args.paymentToken)
+                    .setPaymentType(args.paymentType, args.paymentAmount, args.token)
                     .accountsStrict({
                     globalConfig: globalConfigPda,
                     operation: operationPda,
@@ -106,10 +106,10 @@ exports.default = {
                 const { operation } = yield getOperation(args.paymentType);
                 if (!operation)
                     throw new Error("Operation not found");
-                const paymentToken = operation.paymentToken;
+                const token = operation.token;
                 const agentWallet = args.agentWallet;
-                const userToken = (_a = args.payerAta) !== null && _a !== void 0 ? _a : (0, spl_token_1.getAssociatedTokenAddressSync)(paymentToken, payer);
-                const receiverToken = (_b = args.receiverToken) !== null && _b !== void 0 ? _b : (0, spl_token_1.getAssociatedTokenAddressSync)(paymentToken, agentWallet, true);
+                const userToken = (_a = args.payerAta) !== null && _a !== void 0 ? _a : (0, spl_token_1.getAssociatedTokenAddressSync)(token, payer);
+                const receiverToken = (_b = args.receiverToken) !== null && _b !== void 0 ? _b : (0, spl_token_1.getAssociatedTokenAddressSync)(token, agentWallet, true);
                 const [globalConfigPda] = getGlobalConfigPda();
                 const [operationPda] = getOperationPda(args.paymentType);
                 const pid = Buffer.isBuffer(args.paymentId)

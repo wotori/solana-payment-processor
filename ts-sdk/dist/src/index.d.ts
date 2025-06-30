@@ -202,7 +202,7 @@ declare const _default: {
         setPaymentType: (args: {
             paymentType: string;
             paymentAmount: anchor.BN;
-            paymentToken: PublicKey;
+            token: PublicKey;
         }) => Promise<{
             signature: string;
             operationPda: PublicKey;
@@ -226,7 +226,7 @@ declare const _default: {
             operation: {
                 paymentType: string;
                 paymentAmount: anchor.BN | null;
-                paymentToken: anchor.web3.PublicKey;
+                token: anchor.web3.PublicKey;
             };
         } | {
             operationPda: anchor.web3.PublicKey;

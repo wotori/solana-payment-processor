@@ -272,7 +272,7 @@ export type PaymentProcessor = {
           }
         },
         {
-          "name": "paymentToken",
+          "name": "token",
           "type": "pubkey"
         }
       ]
@@ -385,7 +385,7 @@ export type PaymentProcessor = {
             }
           },
           {
-            "name": "paymentToken",
+            "name": "token",
             "type": "pubkey"
           }
         ]
