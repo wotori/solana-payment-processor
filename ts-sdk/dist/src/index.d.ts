@@ -224,8 +224,8 @@ declare const _default: {
         getOperation: (paymentType: string) => Promise<{
             operationPda: anchor.web3.PublicKey;
             operation: {
-                paymentType: string;
-                paymentAmount: anchor.BN | null;
+                name: string;
+                amount: anchor.BN | null;
                 token: anchor.web3.PublicKey;
             };
         } | {

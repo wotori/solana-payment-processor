@@ -262,7 +262,7 @@ export type PaymentProcessor = {
             ];
             "args": [
                 {
-                    "name": "paymentType";
+                    "name": "paymentTypeName";
                     "type": "string";
                 },
                 {
@@ -375,7 +375,7 @@ export type PaymentProcessor = {
                 "kind": "struct";
                 "fields": [
                     {
-                        "name": "paymentType";
+                        "name": "name";
                         "type": "string";
                     },
                     {
@@ -412,11 +412,11 @@ export type PaymentProcessor = {
                 "kind": "struct";
                 "fields": [
                     {
-                        "name": "paymentType";
+                        "name": "name";
                         "type": "string";
                     },
                     {
-                        "name": "paymentAmount";
+                        "name": "amount";
                         "type": {
                             "option": "u64";
                         };

@@ -65,7 +65,7 @@ describe("payment‑processor (SDK)", () => {
     const { operation } = await sdk.getOperation(paymentType);
     if (!operation) throw new Error("Operation not found");
 
-    expect(operation.paymentAmount.toNumber()).to.equal(
+    expect(operation.amount.toNumber()).to.equal(
       paymentAmount.toNumber(),
     );
     expect(operation.token.toBase58()).to.equal(token.toBase58());

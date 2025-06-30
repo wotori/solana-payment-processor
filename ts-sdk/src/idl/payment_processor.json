@@ -256,7 +256,7 @@
       ],
       "args": [
         {
-          "name": "payment_type",
+          "name": "payment_type_name",
           "type": "string"
         },
         {
@@ -369,7 +369,7 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "payment_type",
+            "name": "name",
             "type": "string"
           },
           {
@@ -406,11 +406,11 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "payment_type",
+            "name": "name",
             "type": "string"
           },
           {
-            "name": "payment_amount",
+            "name": "amount",
             "type": {
               "option": "u64"
             }

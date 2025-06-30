@@ -26,17 +26,17 @@ pub mod payment_processor {
     /// Register or update a payment_type that users can purchase.
     pub fn set_payment_type(
         ctx: Context<SetPaymentType>,
-        payment_type: String,
+        payment_type_name: String,
         payment_amount: Option<u64>,
         token: Pubkey,
     ) -> Result<()> {
-        let operation = &mut ctx.accounts.payment_type;
-        operation.payment_type = payment_type.clone();
-        operation.payment_amount = payment_amount;
-        operation.token = token;
+        let payment_type = &mut ctx.accounts.payment_type;
+        payment_type.name = payment_type_name.clone();
+        payment_type.amount = payment_amount;
+        payment_type.token = token;
 
         emit!(PaymentTypeAdded {
-            payment_type,
+            payment_type: payment_type_name,
             price: payment_amount,
             token: token
         });
@@ -53,7 +53,7 @@ pub mod payment_processor {
         let op = &ctx.accounts.payment_type;
 
         // Enforce price match only when a price is configured
-        if let Some(expected) = op.payment_amount {
+        if let Some(expected) = op.amount {
             require!(amount == expected, XyberError::PriceMismatch);
         }
 
@@ -68,7 +68,7 @@ pub mod payment_processor {
         token::transfer(cpi_ctx, amount)?;
 
         emit!(OperationPaid {
-            payment_type: payment_type.clone(),
+            name: payment_type.clone(),
             payment_mint: op.token,
             payment_id,
             payment_amount: amount,
@@ -136,8 +136,8 @@ pub struct Pay<'info> {
     pub global_config: Account<'info, GlobalConfig>,
 
     #[account(
-    seeds = [OPERATION_SEED, payment_type_name.as_bytes()],
-    bump,
+        seeds = [OPERATION_SEED, payment_type_name.as_bytes()],
+        bump,
     )]
     pub payment_type: Account<'info, PaymentType>,
 
@@ -176,14 +176,14 @@ pub struct GlobalConfig {
 #[derive(InitSpace)]
 pub struct PaymentType {
     #[max_len(32)]
-    pub payment_type: String,
-    pub payment_amount: Option<u64>,
+    pub name: String,
+    pub amount: Option<u64>,
     pub token: Pubkey,
 }
 
 #[event]
 pub struct OperationPaid {
-    pub payment_type: String,
+    pub name: String,
     pub payment_mint: Pubkey,
     pub payment_id: [u8; 32],
     pub payment_amount: u64,
