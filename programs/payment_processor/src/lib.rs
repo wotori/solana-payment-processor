@@ -5,6 +5,12 @@ use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
 declare_id!("8D6DNFXjHFDG2Lgaw84uh111YxtYpJ3yaJJehRpbjt83");
 
+#[constant]
+const GLOBAL_CONFIG_SEED: &[u8] = b"global-config";
+
+#[constant]
+const OPERATION_SEED: &[u8] = b"operation";
+
 #[program]
 pub mod payment_processor {
     use super::*;
@@ -29,7 +35,11 @@ pub mod payment_processor {
         operation.payment_amount = payment_amount;
         operation.payment_token = payment_token;
 
-        emit!(PaymentTypeAdded { payment_type, price: payment_amount, token: payment_token });
+        emit!(PaymentTypeAdded {
+            payment_type,
+            price: payment_amount,
+            token: payment_token
+        });
         Ok(())
     }
 
@@ -80,7 +90,7 @@ pub struct Initialize<'info> {
 
     #[account(
         init_if_needed,
-        seeds = [b"global-config"],
+        seeds = [GLOBAL_CONFIG_SEED],
         bump,
         payer = admin,
         space = GlobalConfig::DISCRIMINATOR.len() + GlobalConfig::INIT_SPACE,
@@ -95,7 +105,7 @@ pub struct Initialize<'info> {
 pub struct SetPaymentType<'info> {
     #[account(
         mut,
-        seeds = [b"global-config"],
+        seeds = [GLOBAL_CONFIG_SEED],
         bump,
         has_one = admin @ XyberError::Unauthorized,
     )]
@@ -104,7 +114,7 @@ pub struct SetPaymentType<'info> {
     #[account(
         init_if_needed,
         payer = admin,
-        seeds = [b"operation", payment_type.as_bytes()],
+        seeds = [OPERATION_SEED, payment_type.as_bytes()],
         bump,
         space = 8 + Operation::INIT_SPACE,
     )]
@@ -120,13 +130,13 @@ pub struct SetPaymentType<'info> {
 #[instruction(payment_type: String)]
 pub struct Pay<'info> {
     #[account(
-        seeds = [b"global-config"],
+        seeds = [GLOBAL_CONFIG_SEED],
         bump,
     )]
     pub global_config: Account<'info, GlobalConfig>,
 
     #[account(
-    seeds = [b"operation", payment_type.as_bytes()],
+    seeds = [OPERATION_SEED, payment_type.as_bytes()],
     bump,
     )]
     pub operation: Account<'info, Operation>,
