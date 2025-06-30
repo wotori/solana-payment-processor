@@ -25,11 +25,11 @@ pub mod payment_processor {
         payment_token: Pubkey,
     ) -> Result<()> {
         let operation = &mut ctx.accounts.operation;
-        operation.payment_type = payment_type;
+        operation.payment_type = payment_type.clone();
         operation.payment_amount = payment_amount;
         operation.payment_token = payment_token;
 
-        emit!(OperationAdded { payment_amount });
+        emit!(PaymentTypeAdded { payment_type, price: payment_amount, token: payment_token });
         Ok(())
     }
 
@@ -182,8 +182,10 @@ pub struct OperationPaid {
 }
 
 #[event]
-pub struct OperationAdded {
-    pub payment_amount: Option<u64>,
+pub struct PaymentTypeAdded {
+    pub payment_type: String,
+    pub price: Option<u64>,
+    pub token: Pubkey,
 }
 
 #[error_code]
