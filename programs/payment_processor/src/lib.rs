@@ -23,14 +23,14 @@ pub mod payment_processor {
         Ok(())
     }
 
-    /// Register or update an operation that users can purchase.
+    /// Register or update a payment_type that users can purchase.
     pub fn set_payment_type(
         ctx: Context<SetPaymentType>,
         payment_type: String,
         payment_amount: Option<u64>,
         token: Pubkey,
     ) -> Result<()> {
-        let operation = &mut ctx.accounts.operation;
+        let operation = &mut ctx.accounts.payment_type;
         operation.payment_type = payment_type.clone();
         operation.payment_amount = payment_amount;
         operation.token = token;
@@ -43,14 +43,14 @@ pub mod payment_processor {
         Ok(())
     }
 
-    /// Pay for a prompt (or any other registered operation).
+    /// Pay for a prompt (or any other registered payment_type).
     pub fn pay(
         ctx: Context<Pay>,
         payment_type: String,
         amount: u64,
         payment_id: [u8; 32],
     ) -> Result<()> {
-        let op = &ctx.accounts.operation;
+        let op = &ctx.accounts.payment_type;
 
         // Enforce price match only when a price is configured
         if let Some(expected) = op.payment_amount {
@@ -101,7 +101,7 @@ pub struct Initialize<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(payment_type: String, token: Pubkey)]
+#[instruction(payment_type_name: String, token: Pubkey)]
 pub struct SetPaymentType<'info> {
     #[account(
         mut,
@@ -114,11 +114,11 @@ pub struct SetPaymentType<'info> {
     #[account(
         init_if_needed,
         payer = admin,
-        seeds = [OPERATION_SEED, payment_type.as_bytes()],
+        seeds = [OPERATION_SEED, payment_type_name.as_bytes()],
         bump,
-        space = 8 + Operation::INIT_SPACE,
+        space = 8 + PaymentType::INIT_SPACE,
     )]
-    pub operation: Account<'info, Operation>,
+    pub payment_type: Account<'info, PaymentType>,
 
     #[account(mut)]
     pub admin: Signer<'info>,
@@ -127,7 +127,7 @@ pub struct SetPaymentType<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(payment_type: String)]
+#[instruction(payment_type_name: String)]
 pub struct Pay<'info> {
     #[account(
         seeds = [GLOBAL_CONFIG_SEED],
@@ -136,14 +136,14 @@ pub struct Pay<'info> {
     pub global_config: Account<'info, GlobalConfig>,
 
     #[account(
-    seeds = [OPERATION_SEED, payment_type.as_bytes()],
+    seeds = [OPERATION_SEED, payment_type_name.as_bytes()],
     bump,
     )]
-    pub operation: Account<'info, Operation>,
+    pub payment_type: Account<'info, PaymentType>,
 
     #[account(
         mut,
-        token::mint = operation.token,
+        token::mint = payment_type.token,
         token::authority = payer,
     )]
     pub payer_ata: Account<'info, TokenAccount>,
@@ -153,7 +153,7 @@ pub struct Pay<'info> {
 
     #[account(
         mut,
-        token::mint = operation.token,
+        token::mint = payment_type.token,
         token::authority = agent_wallet,
         token::token_program = token_program,
         constraint = agent_ata.owner == agent_wallet.key() @ XyberError::WrongReceiver
@@ -174,7 +174,7 @@ pub struct GlobalConfig {
 
 #[account]
 #[derive(InitSpace)]
-pub struct Operation {
+pub struct PaymentType {
     #[max_len(32)]
     pub payment_type: String,
     pub payment_amount: Option<u64>,

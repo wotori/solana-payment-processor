@@ -166,7 +166,7 @@ declare const _default: {
                 } | {
                     name: string;
                     type: {
-                        option: string;
+                        array: (string | number)[];
                     };
                 })[];
             };
@@ -180,7 +180,7 @@ declare const _default: {
                 } | {
                     name: string;
                     type: {
-                        array: (string | number)[];
+                        option: string;
                     };
                 })[];
             };
@@ -194,7 +194,7 @@ declare const _default: {
     idlType: PaymentProcessor;
     create(provider: anchor.Provider, program: Program<PaymentProcessor>): {
         getGlobalConfigPda: () => [PublicKey, number];
-        getOperationPda: (paymentType: string) => [PublicKey, number];
+        getPaymentTypePda: (paymentType: string) => [PublicKey, number];
         initialize: (newAdmin: PublicKey) => Promise<{
             signature: string;
             globalConfigPda: PublicKey;
@@ -400,7 +400,7 @@ export declare const xyberPaymentProcessorSdk: {
                 } | {
                     name: string;
                     type: {
-                        option: string;
+                        array: (string | number)[];
                     };
                 })[];
             };
@@ -414,7 +414,7 @@ export declare const xyberPaymentProcessorSdk: {
                 } | {
                     name: string;
                     type: {
-                        array: (string | number)[];
+                        option: string;
                     };
                 })[];
             };

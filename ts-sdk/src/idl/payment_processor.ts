@@ -75,7 +75,7 @@ export type PaymentProcessor = {
     {
       "name": "pay",
       "docs": [
-        "Pay for a prompt (or any other registered operation)."
+        "Pay for a prompt (or any other registered payment_type)."
       ],
       "discriminator": [
         119,
@@ -114,7 +114,7 @@ export type PaymentProcessor = {
           }
         },
         {
-          "name": "operation",
+          "name": "paymentType",
           "pda": {
             "seeds": [
               {
@@ -133,7 +133,7 @@ export type PaymentProcessor = {
               },
               {
                 "kind": "arg",
-                "path": "paymentType"
+                "path": "paymentTypeName"
               }
             ]
           }
@@ -182,7 +182,7 @@ export type PaymentProcessor = {
     {
       "name": "setPaymentType",
       "docs": [
-        "Register or update an operation that users can purchase."
+        "Register or update a payment_type that users can purchase."
       ],
       "discriminator": [
         51,
@@ -222,7 +222,7 @@ export type PaymentProcessor = {
           }
         },
         {
-          "name": "operation",
+          "name": "paymentType",
           "writable": true,
           "pda": {
             "seeds": [
@@ -242,7 +242,7 @@ export type PaymentProcessor = {
               },
               {
                 "kind": "arg",
-                "path": "paymentType"
+                "path": "paymentTypeName"
               }
             ]
           }
@@ -293,16 +293,16 @@ export type PaymentProcessor = {
       ]
     },
     {
-      "name": "operation",
+      "name": "paymentType",
       "discriminator": [
-        171,
-        150,
-        196,
-        17,
-        229,
-        166,
-        58,
-        44
+        153,
+        159,
+        151,
+        126,
+        70,
+        102,
+        97,
+        97
       ]
     }
   ],
@@ -370,28 +370,6 @@ export type PaymentProcessor = {
       }
     },
     {
-      "name": "operation",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "paymentType",
-            "type": "string"
-          },
-          {
-            "name": "paymentAmount",
-            "type": {
-              "option": "u64"
-            }
-          },
-          {
-            "name": "token",
-            "type": "pubkey"
-          }
-        ]
-      }
-    },
-    {
       "name": "operationPaid",
       "type": {
         "kind": "struct",
@@ -423,6 +401,28 @@ export type PaymentProcessor = {
           },
           {
             "name": "agentWallet",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "paymentType",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "paymentType",
+            "type": "string"
+          },
+          {
+            "name": "paymentAmount",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "token",
             "type": "pubkey"
           }
         ]

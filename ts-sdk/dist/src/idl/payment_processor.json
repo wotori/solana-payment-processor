@@ -69,7 +69,7 @@
         {
             "name": "pay",
             "docs": [
-                "Pay for a prompt (or any other registered operation)."
+                "Pay for a prompt (or any other registered payment_type)."
             ],
             "discriminator": [
                 119,
@@ -108,7 +108,7 @@
                     }
                 },
                 {
-                    "name": "operation",
+                    "name": "payment_type",
                     "pda": {
                         "seeds": [
                             {
@@ -127,7 +127,7 @@
                             },
                             {
                                 "kind": "arg",
-                                "path": "payment_type"
+                                "path": "payment_type_name"
                             }
                         ]
                     }
@@ -176,7 +176,7 @@
         {
             "name": "set_payment_type",
             "docs": [
-                "Register or update an operation that users can purchase."
+                "Register or update a payment_type that users can purchase."
             ],
             "discriminator": [
                 51,
@@ -216,7 +216,7 @@
                     }
                 },
                 {
-                    "name": "operation",
+                    "name": "payment_type",
                     "writable": true,
                     "pda": {
                         "seeds": [
@@ -236,7 +236,7 @@
                             },
                             {
                                 "kind": "arg",
-                                "path": "payment_type"
+                                "path": "payment_type_name"
                             }
                         ]
                     }
@@ -287,16 +287,16 @@
             ]
         },
         {
-            "name": "Operation",
+            "name": "PaymentType",
             "discriminator": [
-                171,
-                150,
-                196,
-                17,
-                229,
-                166,
-                58,
-                44
+                153,
+                159,
+                151,
+                126,
+                70,
+                102,
+                97,
+                97
             ]
         }
     ],
@@ -364,28 +364,6 @@
             }
         },
         {
-            "name": "Operation",
-            "type": {
-                "kind": "struct",
-                "fields": [
-                    {
-                        "name": "payment_type",
-                        "type": "string"
-                    },
-                    {
-                        "name": "payment_amount",
-                        "type": {
-                            "option": "u64"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "type": "pubkey"
-                    }
-                ]
-            }
-        },
-        {
             "name": "OperationPaid",
             "type": {
                 "kind": "struct",
@@ -417,6 +395,28 @@
                     },
                     {
                         "name": "agent_wallet",
+                        "type": "pubkey"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "PaymentType",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "payment_type",
+                        "type": "string"
+                    },
+                    {
+                        "name": "payment_amount",
+                        "type": {
+                            "option": "u64"
+                        }
+                    },
+                    {
+                        "name": "token",
                         "type": "pubkey"
                     }
                 ]
