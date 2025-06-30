@@ -46,11 +46,6 @@ pub mod payment_processor {
         if let Some(expected) = op.payment_amount {
             require!(amount == expected, XyberError::PriceMismatch);
         }
-        require_keys_eq!(
-            ctx.accounts.agent_ata.owner,
-            ctx.accounts.agent_wallet.key(),
-            XyberError::WrongReceiver
-        );
 
         let cpi_ctx = CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
@@ -88,7 +83,7 @@ pub struct Initialize<'info> {
         seeds = [b"global-config"],
         bump,
         payer = admin,
-        space = 8 + GlobalConfig::INIT_SPACE,
+        space = GlobalConfig::DISCRIMINATOR.len() + GlobalConfig::INIT_SPACE,
     )]
     pub global_config: Account<'info, GlobalConfig>,
 
@@ -151,7 +146,8 @@ pub struct Pay<'info> {
         token::mint = operation.payment_token,
         token::authority = agent_wallet,
         token::token_program = token_program,
-    )]
+        constraint = agent_ata.owner == agent_wallet.key() @ XyberError::WrongReceiver
+)]
     pub agent_ata: Account<'info, TokenAccount>,
 
     #[account(mut)]
