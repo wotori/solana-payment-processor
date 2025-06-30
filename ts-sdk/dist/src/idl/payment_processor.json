@@ -24,6 +24,11 @@
             ],
             "accounts": [
                 {
+                    "name": "admin",
+                    "writable": true,
+                    "signer": true
+                },
+                {
                     "name": "global_config",
                     "writable": true,
                     "pda": {
@@ -48,11 +53,6 @@
                             }
                         ]
                     }
-                },
-                {
-                    "name": "admin",
-                    "writable": true,
-                    "signer": true
                 },
                 {
                     "name": "system_program",
@@ -261,7 +261,9 @@
                 },
                 {
                     "name": "payment_amount",
-                    "type": "u64"
+                    "type": {
+                        "option": "u64"
+                    }
                 },
                 {
                     "name": "payment_token",
@@ -300,19 +302,6 @@
     ],
     "events": [
         {
-            "name": "PaymentTypeAdded",
-            "discriminator": [
-                224,
-                26,
-                119,
-                89,
-                98,
-                218,
-                246,
-                253
-            ]
-        },
-        {
             "name": "OperationPaid",
             "discriminator": [
                 247,
@@ -323,6 +312,19 @@
                 18,
                 145,
                 99
+            ]
+        },
+        {
+            "name": "PaymentTypeAdded",
+            "discriminator": [
+                209,
+                41,
+                213,
+                125,
+                145,
+                66,
+                39,
+                225
             ]
         }
     ],
@@ -372,23 +374,13 @@
                     },
                     {
                         "name": "payment_amount",
-                        "type": "u64"
+                        "type": {
+                            "option": "u64"
+                        }
                     },
                     {
                         "name": "payment_token",
                         "type": "pubkey"
-                    }
-                ]
-            }
-        },
-        {
-            "name": "PaymentTypeAdded",
-            "type": {
-                "kind": "struct",
-                "fields": [
-                    {
-                        "name": "payment_amount",
-                        "type": "u64"
                     }
                 ]
             }
@@ -429,6 +421,40 @@
                     }
                 ]
             }
+        },
+        {
+            "name": "PaymentTypeAdded",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "payment_type",
+                        "type": "string"
+                    },
+                    {
+                        "name": "price",
+                        "type": {
+                            "option": "u64"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "type": "pubkey"
+                    }
+                ]
+            }
+        }
+    ],
+    "constants": [
+        {
+            "name": "GLOBAL_CONFIG_SEED",
+            "type": "bytes",
+            "value": "[103, 108, 111, 98, 97, 108, 45, 99, 111, 110, 102, 105, 103]"
+        },
+        {
+            "name": "OPERATION_SEED",
+            "type": "bytes",
+            "value": "[111, 112, 101, 114, 97, 116, 105, 111, 110]"
         }
     ]
 }

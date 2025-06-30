@@ -15,7 +15,7 @@ payment_processor = "8D6DNFXjHFDG2Lgaw84uh111YxtYpJ3yaJJehRpbjt83"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"                # "devnet || localnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

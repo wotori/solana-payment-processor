@@ -55,8 +55,12 @@ exports.default = {
     idlType: null,
     create(provider, program) {
         const payer = provider.publicKey;
-        const GLOBAL_CONFIG_SEED = "global-config";
-        const OPERATION_SEED = "operation";
+        // Helper to read byte-array constants straight from the program IDL
+        function getConstant(name) {
+            return JSON.parse(payment_processor_json_1.default.constants.find((obj) => obj.name === name).value);
+        }
+        const GLOBAL_CONFIG_SEED = getConstant("GLOBAL_CONFIG_SEED");
+        const OPERATION_SEED = getConstant("OPERATION_SEED");
         function getGlobalConfigPda() {
             return web3_js_1.PublicKey.findProgramAddressSync([Buffer.from(GLOBAL_CONFIG_SEED)], program.programId);
         }

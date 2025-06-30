@@ -30,6 +30,11 @@ export type PaymentProcessor = {
             ];
             "accounts": [
                 {
+                    "name": "admin";
+                    "writable": true;
+                    "signer": true;
+                },
+                {
                     "name": "globalConfig";
                     "writable": true;
                     "pda": {
@@ -54,11 +59,6 @@ export type PaymentProcessor = {
                             }
                         ];
                     };
-                },
-                {
-                    "name": "admin";
-                    "writable": true;
-                    "signer": true;
                 },
                 {
                     "name": "systemProgram";
@@ -267,7 +267,9 @@ export type PaymentProcessor = {
                 },
                 {
                     "name": "paymentAmount";
-                    "type": "u64";
+                    "type": {
+                        "option": "u64";
+                    };
                 },
                 {
                     "name": "paymentToken";
@@ -306,19 +308,6 @@ export type PaymentProcessor = {
     ];
     "events": [
         {
-            "name": "operationAdded";
-            "discriminator": [
-                224,
-                26,
-                119,
-                89,
-                98,
-                218,
-                246,
-                253
-            ];
-        },
-        {
             "name": "operationPaid";
             "discriminator": [
                 247,
@@ -329,6 +318,19 @@ export type PaymentProcessor = {
                 18,
                 145,
                 99
+            ];
+        },
+        {
+            "name": "paymentTypeAdded";
+            "discriminator": [
+                209,
+                41,
+                213,
+                125,
+                145,
+                66,
+                39,
+                225
             ];
         }
     ];
@@ -378,23 +380,13 @@ export type PaymentProcessor = {
                     },
                     {
                         "name": "paymentAmount";
-                        "type": "u64";
+                        "type": {
+                            "option": "u64";
+                        };
                     },
                     {
                         "name": "paymentToken";
                         "type": "pubkey";
-                    }
-                ];
-            };
-        },
-        {
-            "name": "operationAdded";
-            "type": {
-                "kind": "struct";
-                "fields": [
-                    {
-                        "name": "paymentAmount";
-                        "type": "u64";
                     }
                 ];
             };
@@ -435,6 +427,40 @@ export type PaymentProcessor = {
                     }
                 ];
             };
+        },
+        {
+            "name": "paymentTypeAdded";
+            "type": {
+                "kind": "struct";
+                "fields": [
+                    {
+                        "name": "paymentType";
+                        "type": "string";
+                    },
+                    {
+                        "name": "price";
+                        "type": {
+                            "option": "u64";
+                        };
+                    },
+                    {
+                        "name": "token";
+                        "type": "pubkey";
+                    }
+                ];
+            };
+        }
+    ];
+    "constants": [
+        {
+            "name": "globalConfigSeed";
+            "type": "bytes";
+            "value": "[103, 108, 111, 98, 97, 108, 45, 99, 111, 110, 102, 105, 103]";
+        },
+        {
+            "name": "operationSeed";
+            "type": "bytes";
+            "value": "[111, 112, 101, 114, 97, 116, 105, 111, 110]";
         }
     ];
 };
