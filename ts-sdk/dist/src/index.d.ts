@@ -200,15 +200,15 @@ declare const _default: {
             globalConfigPda: PublicKey;
         }>;
         setPaymentType: (args: {
-            paymentType: string;
+            paymentTypeName: string;
             amount: anchor.BN;
             token: PublicKey;
         }) => Promise<{
             signature: string;
-            operationPda: PublicKey;
+            paymentTypePda: PublicKey;
         }>;
         pay: (args: {
-            paymentType: string;
+            paymentTypeName: string;
             amount: anchor.BN | number;
             agentWallet: PublicKey;
             paymentId: Uint8Array | number[] | Buffer;
@@ -221,16 +221,16 @@ declare const _default: {
             globalConfigPda: PublicKey;
             globalConfig: any | null;
         }>;
-        getOperation: (paymentType: string) => Promise<{
-            operationPda: anchor.web3.PublicKey;
-            operation: {
+        getPaymentType: (paymentTypeName: string) => Promise<{
+            paymentTypePda: anchor.web3.PublicKey;
+            paymentType: {
                 name: string;
                 amount: anchor.BN | null;
                 token: anchor.web3.PublicKey;
             };
         } | {
-            operationPda: anchor.web3.PublicKey;
-            operation: null;
+            paymentTypePda: anchor.web3.PublicKey;
+            paymentType: null;
         }>;
     };
 };

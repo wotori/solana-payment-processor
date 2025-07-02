@@ -114,15 +114,18 @@
                             {
                                 "kind": "const",
                                 "value": [
-                                    111,
                                     112,
-                                    101,
-                                    114,
                                     97,
+                                    121,
+                                    109,
+                                    101,
+                                    110,
                                     116,
-                                    105,
-                                    111,
-                                    110
+                                    45,
+                                    116,
+                                    121,
+                                    112,
+                                    101
                                 ]
                             },
                             {
@@ -223,15 +226,18 @@
                             {
                                 "kind": "const",
                                 "value": [
-                                    111,
                                     112,
-                                    101,
-                                    114,
                                     97,
+                                    121,
+                                    109,
+                                    101,
+                                    110,
                                     116,
-                                    105,
-                                    111,
-                                    110
+                                    45,
+                                    116,
+                                    121,
+                                    112,
+                                    101
                                 ]
                             },
                             {
@@ -302,16 +308,16 @@
     ],
     "events": [
         {
-            "name": "OperationPaid",
+            "name": "PaymentPaid",
             "discriminator": [
-                247,
-                218,
-                172,
-                190,
-                170,
-                18,
-                145,
-                99
+                203,
+                22,
+                228,
+                26,
+                124,
+                184,
+                66,
+                95
             ]
         },
         {
@@ -342,7 +348,7 @@
         {
             "code": 6002,
             "name": "PriceMismatch",
-            "msg": "Provided price does not match operation price"
+            "msg": "Provided price does not match payment amount"
         },
         {
             "code": 6003,
@@ -364,7 +370,7 @@
             }
         },
         {
-            "name": "OperationPaid",
+            "name": "PaymentPaid",
             "type": {
                 "kind": "struct",
                 "fields": [
@@ -432,7 +438,7 @@
                         "type": "string"
                     },
                     {
-                        "name": "price",
+                        "name": "amount",
                         "type": {
                             "option": "u64"
                         }
@@ -452,9 +458,9 @@
             "value": "[103, 108, 111, 98, 97, 108, 45, 99, 111, 110, 102, 105, 103]"
         },
         {
-            "name": "OPERATION_SEED",
+            "name": "PAYMENT_SEED",
             "type": "bytes",
-            "value": "[111, 112, 101, 114, 97, 116, 105, 111, 110]"
+            "value": "[112, 97, 121, 109, 101, 110, 116, 45, 116, 121, 112, 101]"
         }
     ]
 }

@@ -9,7 +9,7 @@ declare_id!("8D6DNFXjHFDG2Lgaw84uh111YxtYpJ3yaJJehRpbjt83");
 const GLOBAL_CONFIG_SEED: &[u8] = b"global-config";
 
 #[constant]
-const OPERATION_SEED: &[u8] = b"operation";
+const PAYMENT_SEED: &[u8] = b"payment-type";
 
 #[program]
 pub mod payment_processor {
@@ -67,7 +67,7 @@ pub mod payment_processor {
         );
         token::transfer(cpi_ctx, amount)?;
 
-        emit!(OperationPaid {
+        emit!(PaymentPaid {
             name: payment_type.clone(),
             payment_mint: op.token,
             payment_id,
@@ -114,7 +114,7 @@ pub struct SetPaymentType<'info> {
     #[account(
         init_if_needed,
         payer = admin,
-        seeds = [OPERATION_SEED, payment_type_name.as_bytes()],
+        seeds = [PAYMENT_SEED, payment_type_name.as_bytes()],
         bump,
         space = 8 + PaymentType::INIT_SPACE,
     )]
@@ -136,7 +136,7 @@ pub struct Pay<'info> {
     pub global_config: Account<'info, GlobalConfig>,
 
     #[account(
-        seeds = [OPERATION_SEED, payment_type_name.as_bytes()],
+        seeds = [PAYMENT_SEED, payment_type_name.as_bytes()],
         bump,
     )]
     pub payment_type: Account<'info, PaymentType>,
@@ -182,7 +182,7 @@ pub struct PaymentType {
 }
 
 #[event]
-pub struct OperationPaid {
+pub struct PaymentPaid {
     pub name: String,
     pub payment_mint: Pubkey,
     pub payment_id: [u8; 32],
@@ -204,7 +204,7 @@ pub enum XyberError {
     UnsupportedMint,
     #[msg("Receiver token authority does not match agent wallet")]
     WrongReceiver,
-    #[msg("Provided price does not match operation price")]
+    #[msg("Provided price does not match payment amount")]
     PriceMismatch,
     #[msg("Caller is not authorized to modify the global config")]
     Unauthorized,

@@ -120,15 +120,18 @@ export type PaymentProcessor = {
                             {
                                 "kind": "const";
                                 "value": [
-                                    111,
                                     112,
-                                    101,
-                                    114,
                                     97,
+                                    121,
+                                    109,
+                                    101,
+                                    110,
                                     116,
-                                    105,
-                                    111,
-                                    110
+                                    45,
+                                    116,
+                                    121,
+                                    112,
+                                    101
                                 ];
                             },
                             {
@@ -229,15 +232,18 @@ export type PaymentProcessor = {
                             {
                                 "kind": "const";
                                 "value": [
-                                    111,
                                     112,
-                                    101,
-                                    114,
                                     97,
+                                    121,
+                                    109,
+                                    101,
+                                    110,
                                     116,
-                                    105,
-                                    111,
-                                    110
+                                    45,
+                                    116,
+                                    121,
+                                    112,
+                                    101
                                 ];
                             },
                             {
@@ -308,16 +314,16 @@ export type PaymentProcessor = {
     ];
     "events": [
         {
-            "name": "operationPaid";
+            "name": "paymentPaid";
             "discriminator": [
-                247,
-                218,
-                172,
-                190,
-                170,
-                18,
-                145,
-                99
+                203,
+                22,
+                228,
+                26,
+                124,
+                184,
+                66,
+                95
             ];
         },
         {
@@ -348,7 +354,7 @@ export type PaymentProcessor = {
         {
             "code": 6002;
             "name": "priceMismatch";
-            "msg": "Provided price does not match operation price";
+            "msg": "Provided price does not match payment amount";
         },
         {
             "code": 6003;
@@ -370,7 +376,7 @@ export type PaymentProcessor = {
             };
         },
         {
-            "name": "operationPaid";
+            "name": "paymentPaid";
             "type": {
                 "kind": "struct";
                 "fields": [
@@ -438,7 +444,7 @@ export type PaymentProcessor = {
                         "type": "string";
                     },
                     {
-                        "name": "price";
+                        "name": "amount";
                         "type": {
                             "option": "u64";
                         };
@@ -458,9 +464,9 @@ export type PaymentProcessor = {
             "value": "[103, 108, 111, 98, 97, 108, 45, 99, 111, 110, 102, 105, 103]";
         },
         {
-            "name": "operationSeed";
+            "name": "paymentSeed";
             "type": "bytes";
-            "value": "[111, 112, 101, 114, 97, 116, 105, 111, 110]";
+            "value": "[112, 97, 121, 109, 101, 110, 116, 45, 116, 121, 112, 101]";
         }
     ];
 };

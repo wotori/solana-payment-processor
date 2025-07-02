@@ -23,7 +23,7 @@ export default {
         }
 
         const GLOBAL_CONFIG_SEED = getConstant("GLOBAL_CONFIG_SEED");
-        const OPERATION_SEED = getConstant("OPERATION_SEED");
+        const PAYMENT_SEED = getConstant("PAYMENT_SEED");
 
         function getGlobalConfigPda(): [PublicKey, number] {
             return PublicKey.findProgramAddressSync(
@@ -35,7 +35,7 @@ export default {
         function getPaymentTypePda(paymentType: string): [PublicKey, number] {
             return PublicKey.findProgramAddressSync(
                 [
-                    Buffer.from(OPERATION_SEED),
+                    Buffer.from(PAYMENT_SEED),
                     Buffer.from(paymentType),
                 ],
                 program.programId,
@@ -58,42 +58,42 @@ export default {
         }
 
         async function setPaymentType(args: {
-            paymentType: string;
+            paymentTypeName: string;
             amount: anchor.BN;
             token: PublicKey;
-        }): Promise<{ signature: string; operationPda: PublicKey }> {
-            const [operationPda] = getPaymentTypePda(args.paymentType);
+        }): Promise<{ signature: string; paymentTypePda: PublicKey }> {
+            const [paymentTypePda] = getPaymentTypePda(args.paymentTypeName);
             const [globalConfigPda] = getGlobalConfigPda();
 
             const signature = await program.methods
                 .setPaymentType(
-                    args.paymentType,
+                    args.paymentTypeName,
                     args.amount,
                     args.token,
                 )
                 .accountsStrict({
                     globalConfig: globalConfigPda,
-                    paymentType: operationPda,
+                    paymentType: paymentTypePda,
                     admin: payer,
                     systemProgram: SystemProgram.programId,
                 })
                 .rpc();
 
-            return { signature, operationPda };
+            return { signature, paymentTypePda };
         }
 
         async function pay(args: {
-            paymentType: string;
+            paymentTypeName: string;
             amount: anchor.BN | number;
             agentWallet: PublicKey;
             paymentId: Uint8Array | number[] | Buffer;
             payerAta?: PublicKey;
             receiverToken?: PublicKey;
         }): Promise<{ signature: string }> {
-            const { operation: payment_type } = await getOperation(args.paymentType);
-            if (!payment_type) throw new Error("Operation not found");
+            const { paymentType: paymentType } = await getPaymentType(args.paymentTypeName);
+            if (!paymentType) throw new Error("Payment type not found");
 
-            const token = payment_type.token as PublicKey;
+            const token = paymentType.token as PublicKey;
             const agentWallet = args.agentWallet;
 
             const userToken =
@@ -105,7 +105,7 @@ export default {
                 getAssociatedTokenAddressSync(token, agentWallet, true);
 
             const [globalConfigPda] = getGlobalConfigPda();
-            const [operationPda] = getPaymentTypePda(args.paymentType);
+            const [paymentTypePda] = getPaymentTypePda(args.paymentTypeName);
 
             const pid =
                 Buffer.isBuffer(args.paymentId)
@@ -117,13 +117,13 @@ export default {
 
             const signature = await program.methods
                 .pay(
-                    args.paymentType,
+                    args.paymentTypeName,
                     new anchor.BN(args.amount),
                     Array.from(pid) as number[],
                 )
                 .accountsStrict({
                     globalConfig: globalConfigPda,
-                    paymentType: operationPda,
+                    paymentType: paymentTypePda,
                     payerAta: userToken,
                     agentWallet,
                     agentAta: receiverToken,
@@ -148,13 +148,13 @@ export default {
             }
         }
 
-        async function getOperation(paymentType: string) {
-            const [pda] = getPaymentTypePda(paymentType);
+        async function getPaymentType(paymentTypeName: string) {
+            const [pda] = getPaymentTypePda(paymentTypeName);
             try {
                 const data = await program.account.paymentType.fetch(pda);
-                return { operationPda: pda, operation: data };
+                return { paymentTypePda: pda, paymentType: data };
             } catch {
-                return { operationPda: pda, operation: null };
+                return { paymentTypePda: pda, paymentType: null };
             }
         }
 
@@ -165,7 +165,7 @@ export default {
             setPaymentType,
             pay,
             getGlobalConfig,
-            getOperation,
+            getPaymentType,
         };
     },
 };

@@ -8,8 +8,13 @@ import {
   getAccount,
 } from "@solana/spl-token";
 
-import type { PaymentProcessor } from "@xyber-labs/payment-sdk";
-import processorSdk from "@xyber-labs/payment-sdk";
+// import type { PaymentProcessor } from "@xyber-labs/payment-sdk";
+// import processorSdk from "@xyber-labs/payment-sdk";
+
+// For development purposes, it's better to use a direct import, as it doesn't require building the SDK.
+import type { PaymentProcessor } from "../ts-sdk/src";
+import processorSdk from "../ts-sdk/src";
+
 import { expect } from "chai";
 
 const provider = anchor.AnchorProvider.env();
@@ -51,34 +56,34 @@ describe("payment‑processor (SDK)", () => {
     expect(globalConfig.admin.toBase58()).to.equal(provider.publicKey.toBase58());
   });
 
-  it("registers an operation via SDK", async () => {
-    const paymentType = "1";
+  it("registers an payment type via SDK", async () => {
+    const paymentTypeName = "prompt"
     const amount = new anchor.BN(2_000_000); // 2 tokens
 
     const { signature } = await sdk.setPaymentType({
-      paymentType,
+      paymentTypeName,
       amount,
       token,
     });
     console.log("setPaymentType tx:", signature);
 
-    const { operation } = await sdk.getOperation(paymentType);
-    if (!operation) throw new Error("Operation not found");
+    const { paymentType } = await sdk.getPaymentType(paymentTypeName);
+    if (!paymentType) throw new Error("payment not found");
 
-    expect(operation.amount.toNumber()).to.equal(
+    expect(paymentType.amount.toNumber()).to.equal(
       amount.toNumber(),
     );
-    expect(operation.token.toBase58()).to.equal(token.toBase58());
+    expect(paymentType.token.toBase58()).to.equal(token.toBase58());
   });
 
   it("processes a payment and transfers funds", async () => {
-    const paymentType = "1"; // the one we registered above
+    const paymentTypeName = "prompt"; // the one we registered above
     const paymentId = Uint8Array.from(Array(32).fill(7)); // arbitrary 32‑byte id
 
     // --- create actual on‑chain token accounts ---
-    const { operation } = await sdk.getOperation(paymentType);
-    if (!operation) throw new Error("Operation not found");
-    const token = operation.token as PublicKey;
+    const { paymentType } = await sdk.getPaymentType(paymentTypeName);
+    if (!paymentType) throw new Error("Payment type not found");
+    const token = paymentType.token as PublicKey;
 
     const userAta = await createAssociatedTokenAccount(
       provider.connection,
@@ -108,8 +113,8 @@ describe("payment‑processor (SDK)", () => {
     const receiverBalBefore = (await getAccount(provider.connection, receiverAta)).amount;
 
     const { signature } = await sdk.pay({
-      paymentType,
-      amount: 2_000_000, // must match operation.price
+      paymentTypeName,
+      amount: 2_000_000, // must match paymentType.price
       agentWallet: agentWallet.publicKey,
       paymentId,
       payerAta: userAta,
