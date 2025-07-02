@@ -37,8 +37,8 @@ pub mod payment_processor {
 
         emit!(PaymentTypeAdded {
             payment_type: payment_type_name,
-            amount: amount,
-            token: token
+            amount,
+            token
         });
         Ok(())
     }
@@ -71,7 +71,7 @@ pub mod payment_processor {
             name: payment_type.clone(),
             payment_mint: op.token,
             payment_id,
-            amount: amount,
+            amount,
             payer: ctx.accounts.payer.key(),
             agent_wallet: ctx.accounts.agent_wallet.key(),
         });
