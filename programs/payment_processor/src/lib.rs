@@ -152,7 +152,7 @@ pub struct Pay<'info> {
         token::authority = agent_wallet,
         token::token_program = token_program,
         constraint = agent_ata.owner == agent_wallet.key() @ XyberError::WrongReceiver,
-)]
+    )]
     pub agent_ata: Account<'info, TokenAccount>,
 
     pub token_program: Program<'info, Token>,
