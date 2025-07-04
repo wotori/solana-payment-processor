@@ -67,7 +67,7 @@ pub mod payment_processor {
 
         emit!(Payment {
             name: payment_type.clone(),
-            payment_mint: op.token,
+            token: op.token,
             payment_id,
             amount,
             payer: ctx.accounts.payer.key(),
@@ -151,7 +151,7 @@ pub struct PaymentType {
 #[event]
 pub struct Payment {
     pub name: String,
-    pub payment_mint: Pubkey,
+    pub token: Pubkey,
     pub payment_id: [u8; 32],
     pub amount: u64,
     pub payer: Pubkey,
