@@ -89,7 +89,7 @@ exports.default = {
                 const [paymentTypePda] = getPaymentTypePda(args.paymentTypeName);
                 const [globalConfigPda] = getGlobalConfigPda();
                 const signature = yield program.methods
-                    .setPaymentType(args.paymentTypeName, args.amount, args.token)
+                    .setPaymentType(args.paymentTypeName, args.price, args.token)
                     .accountsStrict({
                     globalConfig: globalConfigPda,
                     paymentType: paymentTypePda,

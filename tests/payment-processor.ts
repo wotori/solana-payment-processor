@@ -54,11 +54,11 @@ describe("payment‑processor (SDK)", () => {
 
   it("registers an payment type via SDK", async () => {
     const paymentTypeName = "prompt"
-    const amount = new anchor.BN(2_000_000); // 2 tokens
+    const price = new anchor.BN(2_000_000); // 2 tokens
 
     const { signature } = await sdk.setPaymentType({
       paymentTypeName,
-      amount,
+      price,
       token,
     });
     console.log("setPaymentType tx:", signature);
@@ -67,7 +67,7 @@ describe("payment‑processor (SDK)", () => {
     if (!paymentType) throw new Error("payment not found");
 
     expect(paymentType.amount.toNumber()).to.equal(
-      amount.toNumber(),
+      price.toNumber(),
     );
     expect(paymentType.token.toBase58()).to.equal(token.toBase58());
   });

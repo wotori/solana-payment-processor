@@ -201,7 +201,7 @@ declare const _default: {
         }>;
         setPaymentType: (args: {
             paymentTypeName: string;
-            amount: anchor.BN;
+            price: anchor.BN;
             token: PublicKey;
         }) => Promise<{
             signature: string;
