@@ -79,20 +79,10 @@ pub mod payment_processor {
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
-    #[account(
-        mut,
-        constraint = global_config.admin == Pubkey::default()
-            || admin.key() == global_config.admin @ XyberError::Unauthorized
-    )]
+    #[account(mut, constraint = global_config.admin == Pubkey::default() || admin.key() == global_config.admin @ XyberError::Unauthorized)]
     pub admin: Signer<'info>,
 
-    #[account(
-        init_if_needed,
-        seeds = [GLOBAL_CONFIG_SEED],
-        bump,
-        payer = admin,
-        space = GlobalConfig::DISCRIMINATOR.len() + GlobalConfig::INIT_SPACE,
-    )]
+    #[account(init_if_needed, seeds = [GLOBAL_CONFIG_SEED], bump, payer = admin, space = GlobalConfig::DISCRIMINATOR.len() + GlobalConfig::INIT_SPACE)]
     pub global_config: Account<'info, GlobalConfig>,
 
     pub system_program: Program<'info, System>,
@@ -104,21 +94,10 @@ pub struct SetPaymentType<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
 
-    #[account(
-        mut,
-        seeds = [GLOBAL_CONFIG_SEED],
-        bump,
-        has_one = admin @ XyberError::Unauthorized,
-    )]
+    #[account(mut, seeds = [GLOBAL_CONFIG_SEED], bump, has_one = admin @ XyberError::Unauthorized)]
     pub global_config: Account<'info, GlobalConfig>,
 
-    #[account(
-        init_if_needed,
-        payer = admin,
-        seeds = [PAYMENT_SEED, payment_type_name.as_bytes()],
-        bump,
-        space = 8 + PaymentType::INIT_SPACE,
-    )]
+    #[account(init_if_needed, payer = admin, seeds = [PAYMENT_SEED, payment_type_name.as_bytes()], bump, space = 8 + PaymentType::INIT_SPACE)]
     pub payment_type: Account<'info, PaymentType>,
 
     pub system_program: Program<'info, System>,
@@ -136,11 +115,7 @@ pub struct Pay<'info> {
     #[account(seeds = [PAYMENT_SEED, payment_type_name.as_bytes()], bump)]
     pub payment_type: Account<'info, PaymentType>,
 
-    #[account(
-        mut,
-        token::mint = payment_type.token,
-        token::authority = payer,
-    )]
+    #[account(mut, token::mint = payment_type.token, token::authority = payer)]
     pub payer_ata: Account<'info, TokenAccount>,
 
     /// CHECK: Wallet that will receive the payment
