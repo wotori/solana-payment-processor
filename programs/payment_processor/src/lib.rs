@@ -89,7 +89,7 @@ pub struct Initialize<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(payment_type_name: String, token: Pubkey)]
+#[instruction(payment_type_name: String)]
 pub struct SetPaymentType<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
