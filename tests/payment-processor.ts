@@ -8,12 +8,8 @@ import {
   getAccount,
 } from "@solana/spl-token";
 
-// import type { PaymentProcessor } from "@xyber-labs/payment-sdk";
-// import processorSdk from "@xyber-labs/payment-sdk";
-
-// For development purposes, it's better to use a direct import, as it doesn't require building the SDK.
-import type { PaymentProcessor } from "../ts-sdk/src";
-import processorSdk from "../ts-sdk/src";
+import type { PaymentProcessor } from "@xyber-labs/payment-sdk";
+import processorSdk from "@xyber-labs/payment-sdk";
 
 import { expect } from "chai";
 
