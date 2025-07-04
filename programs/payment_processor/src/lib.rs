@@ -16,7 +16,6 @@ pub mod payment_processor {
     /// One-time program initialization by the admin.
     pub fn initialize(ctx: Context<Initialize>, new_admin: Pubkey) -> Result<()> {
         let cfg = &mut ctx.accounts.global_config;
-        // Authorization constraint enforced declaratively on the admin account
         cfg.admin = new_admin;
         Ok(())
     }
@@ -50,7 +49,6 @@ pub mod payment_processor {
     ) -> Result<()> {
         let op = &ctx.accounts.payment_type;
 
-        // Enforce price match only when a price is configured
         if let Some(expected) = op.amount {
             require!(amount == expected, XyberError::PriceMismatch);
         }
@@ -79,10 +77,19 @@ pub mod payment_processor {
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
-    #[account(mut, constraint = global_config.admin == Pubkey::default() || admin.key() == global_config.admin @ XyberError::Unauthorized)]
+    #[account(
+        mut,
+        constraint = global_config.admin == Pubkey::default()
+            || admin.key() == global_config.admin @ XyberError::Unauthorized
+    )]
     pub admin: Signer<'info>,
 
-    #[account(init_if_needed, seeds = [GLOBAL_CONFIG_SEED], bump, payer = admin, space = GlobalConfig::DISCRIMINATOR.len() + GlobalConfig::INIT_SPACE)]
+    #[account(
+        init_if_needed,
+        seeds = [GLOBAL_CONFIG_SEED],
+        bump, payer = admin,
+        space = GlobalConfig::DISCRIMINATOR.len() + GlobalConfig::INIT_SPACE
+    )]
     pub global_config: Account<'info, GlobalConfig>,
 
     pub system_program: Program<'info, System>,
@@ -97,7 +104,13 @@ pub struct SetPaymentType<'info> {
     #[account(mut, seeds = [GLOBAL_CONFIG_SEED], bump, has_one = admin @ XyberError::Unauthorized)]
     pub global_config: Account<'info, GlobalConfig>,
 
-    #[account(init_if_needed, payer = admin, seeds = [PAYMENT_SEED, payment_type_name.as_bytes()], bump, space = 8 + PaymentType::INIT_SPACE)]
+    #[account(
+        init_if_needed,
+        payer = admin,
+        seeds = [PAYMENT_SEED, payment_type_name.as_bytes()],
+        space = PaymentType::DISCRIMINATOR.len() + PaymentType::INIT_SPACE,
+        bump
+    )]
     pub payment_type: Account<'info, PaymentType>,
 
     pub system_program: Program<'info, System>,

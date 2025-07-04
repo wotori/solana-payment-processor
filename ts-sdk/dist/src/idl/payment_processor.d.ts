@@ -316,14 +316,14 @@ export type PaymentProcessor = {
         {
             "name": "payment";
             "discriminator": [
-                203,
-                22,
-                228,
-                26,
-                124,
-                184,
-                66,
-                95
+                173,
+                15,
+                163,
+                37,
+                17,
+                144,
+                245,
+                221
             ];
         },
         {

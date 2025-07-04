@@ -385,7 +385,7 @@ export type PaymentProcessor = {
             "type": "string"
           },
           {
-            "name": "paymentMint",
+            "name": "token",
             "type": "pubkey"
           },
           {
