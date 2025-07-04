@@ -101,6 +101,9 @@ pub struct Initialize<'info> {
 #[derive(Accounts)]
 #[instruction(payment_type_name: String, token: Pubkey)]
 pub struct SetPaymentType<'info> {
+    #[account(mut)]
+    pub admin: Signer<'info>,
+
     #[account(
         mut,
         seeds = [GLOBAL_CONFIG_SEED],
@@ -118,15 +121,15 @@ pub struct SetPaymentType<'info> {
     )]
     pub payment_type: Account<'info, PaymentType>,
 
-    #[account(mut)]
-    pub admin: Signer<'info>,
-
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 #[instruction(payment_type_name: String)]
 pub struct Pay<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+
     #[account(
         seeds = [GLOBAL_CONFIG_SEED],
         bump,
@@ -157,9 +160,6 @@ pub struct Pay<'info> {
         constraint = agent_ata.owner == agent_wallet.key() @ XyberError::WrongReceiver
 )]
     pub agent_ata: Account<'info, TokenAccount>,
-
-    #[account(mut)]
-    pub payer: Signer<'info>,
 
     pub token_program: Program<'info, Token>,
 }
