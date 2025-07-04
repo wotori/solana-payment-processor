@@ -49,6 +49,12 @@ declare const _default: {
             discriminator: number[];
             accounts: ({
                 name: string;
+                writable: boolean;
+                signer: boolean;
+                pda?: undefined;
+                address?: undefined;
+            } | {
+                name: string;
                 pda: {
                     seeds: ({
                         kind: string;
@@ -66,27 +72,21 @@ declare const _default: {
             } | {
                 name: string;
                 writable: boolean;
-                pda?: undefined;
                 signer?: undefined;
+                pda?: undefined;
                 address?: undefined;
             } | {
                 name: string;
-                pda?: undefined;
                 writable?: undefined;
                 signer?: undefined;
-                address?: undefined;
-            } | {
-                name: string;
-                writable: boolean;
-                signer: boolean;
                 pda?: undefined;
                 address?: undefined;
             } | {
                 name: string;
                 address: string;
-                pda?: undefined;
                 writable?: undefined;
                 signer?: undefined;
+                pda?: undefined;
             })[];
             args: ({
                 name: string;
@@ -104,6 +104,13 @@ declare const _default: {
             accounts: ({
                 name: string;
                 writable: boolean;
+                signer: boolean;
+                relations: string[];
+                pda?: undefined;
+                address?: undefined;
+            } | {
+                name: string;
+                writable: boolean;
                 pda: {
                     seeds: ({
                         kind: string;
@@ -120,18 +127,11 @@ declare const _default: {
                 address?: undefined;
             } | {
                 name: string;
-                writable: boolean;
-                signer: boolean;
-                relations: string[];
-                pda?: undefined;
-                address?: undefined;
-            } | {
-                name: string;
                 address: string;
                 writable?: undefined;
-                pda?: undefined;
                 signer?: undefined;
                 relations?: undefined;
+                pda?: undefined;
             })[];
             args: ({
                 name: string;
@@ -283,6 +283,12 @@ export declare const xyberPaymentProcessorSdk: {
             discriminator: number[];
             accounts: ({
                 name: string;
+                writable: boolean;
+                signer: boolean;
+                pda?: undefined;
+                address?: undefined;
+            } | {
+                name: string;
                 pda: {
                     seeds: ({
                         kind: string;
@@ -300,27 +306,21 @@ export declare const xyberPaymentProcessorSdk: {
             } | {
                 name: string;
                 writable: boolean;
-                pda?: undefined;
                 signer?: undefined;
+                pda?: undefined;
                 address?: undefined;
             } | {
                 name: string;
-                pda?: undefined;
                 writable?: undefined;
                 signer?: undefined;
-                address?: undefined;
-            } | {
-                name: string;
-                writable: boolean;
-                signer: boolean;
                 pda?: undefined;
                 address?: undefined;
             } | {
                 name: string;
                 address: string;
-                pda?: undefined;
                 writable?: undefined;
                 signer?: undefined;
+                pda?: undefined;
             })[];
             args: ({
                 name: string;
@@ -338,6 +338,13 @@ export declare const xyberPaymentProcessorSdk: {
             accounts: ({
                 name: string;
                 writable: boolean;
+                signer: boolean;
+                relations: string[];
+                pda?: undefined;
+                address?: undefined;
+            } | {
+                name: string;
+                writable: boolean;
                 pda: {
                     seeds: ({
                         kind: string;
@@ -354,18 +361,11 @@ export declare const xyberPaymentProcessorSdk: {
                 address?: undefined;
             } | {
                 name: string;
-                writable: boolean;
-                signer: boolean;
-                relations: string[];
-                pda?: undefined;
-                address?: undefined;
-            } | {
-                name: string;
                 address: string;
                 writable?: undefined;
-                pda?: undefined;
                 signer?: undefined;
                 relations?: undefined;
+                pda?: undefined;
             })[];
             args: ({
                 name: string;

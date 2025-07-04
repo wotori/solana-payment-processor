@@ -65,7 +65,7 @@ pub mod payment_processor {
         );
         token::transfer(cpi_ctx, amount)?;
 
-        emit!(PaymentPaid {
+        emit!(Payment {
             name: payment_type.clone(),
             payment_mint: op.token,
             payment_id,
@@ -149,7 +149,7 @@ pub struct PaymentType {
 }
 
 #[event]
-pub struct PaymentPaid {
+pub struct Payment {
     pub name: String,
     pub payment_mint: Pubkey,
     pub payment_id: [u8; 32],

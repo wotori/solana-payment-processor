@@ -314,16 +314,16 @@ export type PaymentProcessor = {
   ],
   "events": [
     {
-      "name": "paymentPaid",
+      "name": "payment",
       "discriminator": [
-        203,
-        22,
-        228,
-        26,
-        124,
-        184,
-        66,
-        95
+        173,
+        15,
+        163,
+        37,
+        17,
+        144,
+        245,
+        221
       ]
     },
     {
@@ -376,7 +376,7 @@ export type PaymentProcessor = {
       }
     },
     {
-      "name": "paymentPaid",
+      "name": "payment",
       "type": {
         "kind": "struct",
         "fields": [

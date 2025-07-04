@@ -89,6 +89,11 @@ export type PaymentProcessor = {
             ];
             "accounts": [
                 {
+                    "name": "payer";
+                    "writable": true;
+                    "signer": true;
+                },
+                {
                     "name": "globalConfig";
                     "pda": {
                         "seeds": [
@@ -153,11 +158,6 @@ export type PaymentProcessor = {
                     "writable": true;
                 },
                 {
-                    "name": "payer";
-                    "writable": true;
-                    "signer": true;
-                },
-                {
                     "name": "tokenProgram";
                     "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
                 }
@@ -198,6 +198,14 @@ export type PaymentProcessor = {
                 72
             ];
             "accounts": [
+                {
+                    "name": "admin";
+                    "writable": true;
+                    "signer": true;
+                    "relations": [
+                        "globalConfig"
+                    ];
+                },
                 {
                     "name": "globalConfig";
                     "writable": true;
@@ -254,14 +262,6 @@ export type PaymentProcessor = {
                     };
                 },
                 {
-                    "name": "admin";
-                    "writable": true;
-                    "signer": true;
-                    "relations": [
-                        "globalConfig"
-                    ];
-                },
-                {
                     "name": "systemProgram";
                     "address": "11111111111111111111111111111111";
                 }
@@ -272,7 +272,7 @@ export type PaymentProcessor = {
                     "type": "string";
                 },
                 {
-                    "name": "amount";
+                    "name": "price";
                     "type": {
                         "option": "u64";
                     };
@@ -314,7 +314,7 @@ export type PaymentProcessor = {
     ];
     "events": [
         {
-            "name": "paymentPaid";
+            "name": "payment";
             "discriminator": [
                 203,
                 22,
@@ -376,7 +376,7 @@ export type PaymentProcessor = {
             };
         },
         {
-            "name": "paymentPaid";
+            "name": "payment";
             "type": {
                 "kind": "struct";
                 "fields": [
@@ -444,7 +444,7 @@ export type PaymentProcessor = {
                         "type": "string";
                     },
                     {
-                        "name": "amount";
+                        "name": "price";
                         "type": {
                             "option": "u64";
                         };
