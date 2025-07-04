@@ -130,16 +130,10 @@ pub struct Pay<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
-    #[account(
-        seeds = [GLOBAL_CONFIG_SEED],
-        bump,
-    )]
+    #[account(seeds = [GLOBAL_CONFIG_SEED], bump)]
     pub global_config: Account<'info, GlobalConfig>,
 
-    #[account(
-        seeds = [PAYMENT_SEED, payment_type_name.as_bytes()],
-        bump,
-    )]
+    #[account(seeds = [PAYMENT_SEED, payment_type_name.as_bytes()], bump)]
     pub payment_type: Account<'info, PaymentType>,
 
     #[account(
@@ -157,7 +151,7 @@ pub struct Pay<'info> {
         token::mint = payment_type.token,
         token::authority = agent_wallet,
         token::token_program = token_program,
-        constraint = agent_ata.owner == agent_wallet.key() @ XyberError::WrongReceiver
+        constraint = agent_ata.owner == agent_wallet.key() @ XyberError::WrongReceiver,
 )]
     pub agent_ata: Account<'info, TokenAccount>,
 

@@ -83,6 +83,11 @@
       ],
       "accounts": [
         {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "global_config",
           "pda": {
             "seeds": [
@@ -147,11 +152,6 @@
           "writable": true
         },
         {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
           "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         }
@@ -192,6 +192,14 @@
         72
       ],
       "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "global_config"
+          ]
+        },
         {
           "name": "global_config",
           "writable": true,
@@ -248,14 +256,6 @@
           }
         },
         {
-          "name": "admin",
-          "writable": true,
-          "signer": true,
-          "relations": [
-            "global_config"
-          ]
-        },
-        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -266,7 +266,7 @@
           "type": "string"
         },
         {
-          "name": "amount",
+          "name": "price",
           "type": {
             "option": "u64"
           }
@@ -438,7 +438,7 @@
             "type": "string"
           },
           {
-            "name": "amount",
+            "name": "price",
             "type": {
               "option": "u64"
             }
