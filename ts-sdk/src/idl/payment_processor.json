@@ -1,13 +1,7 @@
-/**
- * Program IDL in camelCase format in order to be used in JS/TS.
- *
- * Note that this is only a type helper and is not the actual IDL. The original
- * IDL can be found at `target/idl/payment_processor.json`.
- */
-export type PaymentProcessor = {
+{
   "address": "8D6DNFXjHFDG2Lgaw84uh111YxtYpJ3yaJJehRpbjt83",
   "metadata": {
-    "name": "paymentProcessor",
+    "name": "payment_processor",
     "version": "0.1.0",
     "spec": "0.1.0",
     "description": "Created with Anchor"
@@ -16,11 +10,7 @@ export type PaymentProcessor = {
     {
       "name": "initialize",
       "docs": [
-        "One-time program initialization by the admin.",
-        "",
-        "* `accepted_mint`  – SPL-Token mint that the program will accept as payment.",
-        "* `prompt_price`   – Reference price for a single prompt, expressed in the *accepted",
-        "mint’s smallest units (no oracle look-ups for now)."
+        "One-time program initialization by the admin."
       ],
       "discriminator": [
         175,
@@ -34,7 +24,12 @@ export type PaymentProcessor = {
       ],
       "accounts": [
         {
-          "name": "globalConfig",
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "global_config",
           "writable": true,
           "pda": {
             "seeds": [
@@ -60,30 +55,21 @@ export type PaymentProcessor = {
           }
         },
         {
-          "name": "admin",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "acceptedMint",
+          "name": "new_admin",
           "type": "pubkey"
-        },
-        {
-          "name": "promptPrice",
-          "type": "u64"
         }
       ]
     },
     {
       "name": "pay",
       "docs": [
-        "Pay for a prompt (or any other registered operation)."
+        "Pay for a prompt (or any other registered payment_type)."
       ],
       "discriminator": [
         119,
@@ -97,7 +83,12 @@ export type PaymentProcessor = {
       ],
       "accounts": [
         {
-          "name": "globalConfig",
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "global_config",
           "pda": {
             "seeds": [
               {
@@ -122,62 +113,60 @@ export type PaymentProcessor = {
           }
         },
         {
-          "name": "operation",
+          "name": "payment_type",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  111,
                   112,
-                  101,
-                  114,
                   97,
+                  121,
+                  109,
+                  101,
+                  110,
                   116,
-                  105,
-                  111,
-                  110
+                  45,
+                  116,
+                  121,
+                  112,
+                  101
                 ]
               },
               {
                 "kind": "arg",
-                "path": "paymentType"
+                "path": "payment_type_name"
               }
             ]
           }
         },
         {
-          "name": "userPaymentToken",
+          "name": "payer_ata",
           "writable": true
         },
         {
-          "name": "agentWallet"
+          "name": "agent_wallet"
         },
         {
-          "name": "receiverToken",
+          "name": "agent_ata",
           "writable": true
         },
         {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "tokenProgram",
+          "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         }
       ],
       "args": [
         {
-          "name": "paymentType",
+          "name": "payment_type",
+          "type": "string"
+        },
+        {
+          "name": "amount",
           "type": "u64"
         },
         {
-          "name": "price",
-          "type": "u64"
-        },
-        {
-          "name": "paymentId",
+          "name": "payment_id",
           "type": {
             "array": [
               "u8",
@@ -188,23 +177,31 @@ export type PaymentProcessor = {
       ]
     },
     {
-      "name": "setOperation",
+      "name": "set_payment_type",
       "docs": [
-        "Register or update an operation that users can purchase."
+        "Register or update a payment_type that users can purchase."
       ],
       "discriminator": [
-        41,
-        217,
-        83,
-        153,
-        61,
-        159,
-        14,
-        101
+        51,
+        107,
+        40,
+        148,
+        222,
+        186,
+        109,
+        72
       ],
       "accounts": [
         {
-          "name": "globalConfig",
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "global_config"
+          ]
+        },
+        {
+          "name": "global_config",
           "writable": true,
           "pda": {
             "seeds": [
@@ -230,59 +227,52 @@ export type PaymentProcessor = {
           }
         },
         {
-          "name": "operation",
+          "name": "payment_type",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  111,
                   112,
-                  101,
-                  114,
                   97,
+                  121,
+                  109,
+                  101,
+                  110,
                   116,
-                  105,
-                  111,
-                  110
+                  45,
+                  116,
+                  121,
+                  112,
+                  101
                 ]
               },
               {
                 "kind": "arg",
-                "path": "paymentType"
+                "path": "payment_type_name"
               }
             ]
           }
         },
         {
-          "name": "admin",
-          "writable": true,
-          "signer": true,
-          "relations": [
-            "globalConfig"
-          ]
-        },
-        {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "paymentType",
-          "type": "u64"
-        },
-        {
-          "name": "name",
+          "name": "payment_type_name",
           "type": "string"
         },
         {
-          "name": "paymentAmount",
-          "type": "u64"
+          "name": "price",
+          "type": {
+            "option": "u64"
+          }
         },
         {
-          "name": "agentToken",
+          "name": "token",
           "type": "pubkey"
         }
       ]
@@ -290,7 +280,7 @@ export type PaymentProcessor = {
   ],
   "accounts": [
     {
-      "name": "globalConfig",
+      "name": "GlobalConfig",
       "discriminator": [
         149,
         8,
@@ -303,124 +293,84 @@ export type PaymentProcessor = {
       ]
     },
     {
-      "name": "operation",
+      "name": "PaymentType",
       "discriminator": [
-        171,
-        150,
-        196,
-        17,
-        229,
-        166,
-        58,
-        44
+        153,
+        159,
+        151,
+        126,
+        70,
+        102,
+        97,
+        97
       ]
     }
   ],
   "events": [
     {
-      "name": "operationAdded",
+      "name": "Payment",
       "discriminator": [
-        224,
-        26,
-        119,
-        89,
-        98,
-        218,
-        246,
-        253
+        173,
+        15,
+        163,
+        37,
+        17,
+        144,
+        245,
+        221
       ]
     },
     {
-      "name": "operationPaid",
+      "name": "PaymentTypeAdded",
       "discriminator": [
-        247,
-        218,
-        172,
-        190,
-        170,
-        18,
+        209,
+        41,
+        213,
+        125,
         145,
-        99
+        66,
+        39,
+        225
       ]
     }
   ],
   "errors": [
     {
       "code": 6000,
-      "name": "unsupportedMint",
+      "name": "UnsupportedMint",
       "msg": "Unsupported payment token mint"
     },
     {
       "code": 6001,
-      "name": "nameTooLong",
-      "msg": "Operation name longer than 64 bytes"
-    },
-    {
-      "code": 6002,
-      "name": "wrongReceiver",
+      "name": "WrongReceiver",
       "msg": "Receiver token authority does not match agent wallet"
     },
     {
+      "code": 6002,
+      "name": "PriceMismatch",
+      "msg": "Provided price does not match payment amount"
+    },
+    {
       "code": 6003,
-      "name": "priceMismatch",
-      "msg": "Provided price does not match operation price"
+      "name": "Unauthorized",
+      "msg": "Caller is not authorized to modify the global config"
     }
   ],
   "types": [
     {
-      "name": "globalConfig",
+      "name": "GlobalConfig",
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "admin",
             "type": "pubkey"
-          },
-          {
-            "name": "acceptedMint",
-            "type": "pubkey"
-          },
-          {
-            "name": "promptPrice",
-            "type": "u64"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
           }
         ]
       }
     },
     {
-      "name": "operation",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "paymentType",
-            "type": "u64"
-          },
-          {
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "name": "paymentAmount",
-            "type": "u64"
-          },
-          {
-            "name": "agentToken",
-            "type": "pubkey"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "operationAdded",
+      "name": "Payment",
       "type": {
         "kind": "struct",
         "fields": [
@@ -429,35 +379,11 @@ export type PaymentProcessor = {
             "type": "string"
           },
           {
-            "name": "paymentAmount",
-            "type": "u64"
-          },
-          {
-            "name": "agentToken",
+            "name": "token",
             "type": "pubkey"
           },
           {
-            "name": "caller",
-            "type": "pubkey"
-          }
-        ]
-      }
-    },
-    {
-      "name": "operationPaid",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "paymentType",
-            "type": "u64"
-          },
-          {
-            "name": "paymentMint",
-            "type": "pubkey"
-          },
-          {
-            "name": "paymentId",
+            "name": "payment_id",
             "type": {
               "array": [
                 "u8",
@@ -466,7 +392,7 @@ export type PaymentProcessor = {
             }
           },
           {
-            "name": "paymentAmount",
+            "name": "amount",
             "type": "u64"
           },
           {
@@ -474,11 +400,67 @@ export type PaymentProcessor = {
             "type": "pubkey"
           },
           {
-            "name": "agentWallet",
+            "name": "agent_wallet",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PaymentType",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "token",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PaymentTypeAdded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "payment_type",
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "token",
             "type": "pubkey"
           }
         ]
       }
     }
+  ],
+  "constants": [
+    {
+      "name": "GLOBAL_CONFIG_SEED",
+      "type": "bytes",
+      "value": "[103, 108, 111, 98, 97, 108, 45, 99, 111, 110, 102, 105, 103]"
+    },
+    {
+      "name": "PAYMENT_SEED",
+      "type": "bytes",
+      "value": "[112, 97, 121, 109, 101, 110, 116, 45, 116, 121, 112, 101]"
+    }
   ]
-};
+}

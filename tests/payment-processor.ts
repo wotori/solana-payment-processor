@@ -8,8 +8,9 @@ import {
   getAccount,
 } from "@solana/spl-token";
 
-import { PaymentProcessor } from "../target/types/payment_processor";
-import processorSdk from "../sdk/src";
+import type { PaymentProcessor } from "@xyber-labs/payment-sdk";
+import processorSdk from "@xyber-labs/payment-sdk";
+
 import { expect } from "chai";
 
 const provider = anchor.AnchorProvider.env();
@@ -21,12 +22,12 @@ const program = anchor.workspace
 const sdk = processorSdk.create(provider, program);
 
 describe("payment‑processor (SDK)", () => {
-  let acceptedMint: PublicKey;
+  let token: PublicKey;
   let agentWallet: Keypair;
 
   before(async () => {
     // Create a dummy SPL‑Token mint we will use for all tests (6 decimals).
-    acceptedMint = await createMint(
+    token = await createMint(
       provider.connection,
       provider.wallet.payer,
       provider.wallet.publicKey,
@@ -42,64 +43,55 @@ describe("payment‑processor (SDK)", () => {
   });
 
   it("initializes the global config via SDK", async () => {
-    const promptPrice = new anchor.BN(1_000_000); // 1 token (10^6 in 6‑decimals)
-
-    const { signature } = await sdk.initialize({
-      acceptedMint,
-      promptPrice,
-    });
+    const { signature } = await sdk.initialize(provider.publicKey);
     console.log("initialize tx:", signature);
 
     const { globalConfig } = await sdk.getGlobalConfig();
     if (!globalConfig) throw new Error("GlobalConfig not found after init");
 
-    // Basic expectations
-    expect(globalConfig.acceptedMint.toBase58()).to.equal(
-      acceptedMint.toBase58(),
-    );
-    expect(globalConfig.promptPrice.toNumber()).to.equal(promptPrice.toNumber());
+    expect(globalConfig.admin.toBase58()).to.equal(provider.publicKey.toBase58());
   });
 
-  it("registers an operation via SDK", async () => {
-    const paymentType = 1;
-    const name = "text‑completion";
-    const paymentAmount = new anchor.BN(2_000_000); // 2 tokens
-    const agentToken = Keypair.generate().publicKey;
+  it("registers an payment type via SDK", async () => {
+    const paymentTypeName = "prompt"
+    const price = new anchor.BN(2_000_000); // 2 tokens
 
-    const { signature } = await sdk.setOperation({
-      paymentType,
-      name,
-      paymentAmount,
-      agentToken,
+    const { signature } = await sdk.setPaymentType({
+      paymentTypeName,
+      price,
+      token,
     });
-    console.log("setOperation tx:", signature);
+    console.log("setPaymentType tx:", signature);
 
-    const { operation } = await sdk.getOperation(paymentType);
-    if (!operation) throw new Error("Operation not found");
+    const { paymentType } = await sdk.getPaymentType(paymentTypeName);
+    if (!paymentType) throw new Error("payment not found");
 
-    expect(operation.name).to.equal(name);
-    expect(operation.paymentAmount.toNumber()).to.equal(
-      paymentAmount.toNumber(),
+    expect(paymentType.amount.toNumber()).to.equal(
+      price.toNumber(),
     );
-    expect(operation.agentToken.toBase58()).to.equal(agentToken.toBase58());
+    expect(paymentType.token.toBase58()).to.equal(token.toBase58());
   });
 
   it("processes a payment and transfers funds", async () => {
-    const paymentType = 1; // the one we registered above
+    const paymentTypeName = "prompt"; // the one we registered above
     const paymentId = Uint8Array.from(Array(32).fill(7)); // arbitrary 32‑byte id
 
     // --- create actual on‑chain token accounts ---
+    const { paymentType } = await sdk.getPaymentType(paymentTypeName);
+    if (!paymentType) throw new Error("Payment type not found");
+    const token = paymentType.token as PublicKey;
+
     const userAta = await createAssociatedTokenAccount(
       provider.connection,
       provider.wallet.payer,          // payer of rent / fees
-      acceptedMint,                   // mint
+      token,                   // mint
       provider.wallet.publicKey,      // owner
     );
 
     const receiverAta = await createAssociatedTokenAccount(
       provider.connection,
       provider.wallet.payer,          // payer
-      acceptedMint,
+      token,
       agentWallet.publicKey,          // owner (agent)
     );
 
@@ -107,7 +99,7 @@ describe("payment‑processor (SDK)", () => {
     await mintTo(
       provider.connection,
       provider.wallet.payer,
-      acceptedMint,
+      token,
       userAta,
       provider.wallet.publicKey,
       5_000_000,
@@ -117,11 +109,11 @@ describe("payment‑processor (SDK)", () => {
     const receiverBalBefore = (await getAccount(provider.connection, receiverAta)).amount;
 
     const { signature } = await sdk.pay({
-      paymentType,
-      price: 2_000_000, // must match operation.paymentAmount
+      paymentTypeName,
+      amount: 2_000_000, // must match paymentType.price
       agentWallet: agentWallet.publicKey,
       paymentId,
-      userPaymentToken: userAta,
+      payerAta: userAta,
       receiverToken: receiverAta,
     });
     console.log("pay tx:", signature);
@@ -129,8 +121,18 @@ describe("payment‑processor (SDK)", () => {
     const userBalAfter = (await getAccount(provider.connection, userAta)).amount;
     const receiverBalAfter = (await getAccount(provider.connection, receiverAta)).amount;
 
-    // We registered paymentAmount = 2_000_000 (2 tokens)
+    // We registered price = 2_000_000 (2 tokens)
     expect(BigInt(userBalBefore) - BigInt(userBalAfter)).to.equal(2_000_000n);
     expect(BigInt(receiverBalAfter) - BigInt(receiverBalBefore)).to.equal(2_000_000n);
   });
+});
+
+it("re-initializes the global config with same admin", async () => {
+  const { signature } = await sdk.initialize(provider.publicKey);
+  console.log("re-initialize tx:", signature);
+
+  const { globalConfig } = await sdk.getGlobalConfig();
+  if (!globalConfig) throw new Error("GlobalConfig not found after re-init");
+
+  expect(globalConfig.admin.toBase58()).to.equal(provider.publicKey.toBase58());
 });

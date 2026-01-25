@@ -55,22 +55,26 @@ exports.default = {
     idlType: null,
     create(provider, program) {
         const payer = provider.publicKey;
-        const GLOBAL_CONFIG_SEED = "global-config";
-        const OPERATION_SEED = "operation";
+        // Helper to read byte-array constants straight from the program IDL
+        function getConstant(name) {
+            return JSON.parse(payment_processor_json_1.default.constants.find((obj) => obj.name === name).value);
+        }
+        const GLOBAL_CONFIG_SEED = getConstant("GLOBAL_CONFIG_SEED");
+        const PAYMENT_SEED = getConstant("PAYMENT_SEED");
         function getGlobalConfigPda() {
             return web3_js_1.PublicKey.findProgramAddressSync([Buffer.from(GLOBAL_CONFIG_SEED)], program.programId);
         }
-        function getOperationPda(paymentType) {
+        function getPaymentTypePda(paymentType) {
             return web3_js_1.PublicKey.findProgramAddressSync([
-                Buffer.from(OPERATION_SEED),
-                new anchor.BN(paymentType).toArrayLike(Buffer, "le", 8),
+                Buffer.from(PAYMENT_SEED),
+                Buffer.from(paymentType),
             ], program.programId);
         }
-        function initialize(args) {
+        function initialize(newAdmin) {
             return __awaiter(this, void 0, void 0, function* () {
                 const [globalConfigPda] = getGlobalConfigPda();
                 const signature = yield program.methods
-                    .initialize(args.acceptedMint, args.promptPrice)
+                    .initialize(newAdmin)
                     .accountsStrict({
                     globalConfig: globalConfigPda,
                     admin: payer,
@@ -80,47 +84,47 @@ exports.default = {
                 return { signature, globalConfigPda };
             });
         }
-        function setOperation(args) {
+        function setPaymentType(args) {
             return __awaiter(this, void 0, void 0, function* () {
-                const [operationPda] = getOperationPda(args.paymentType);
+                const [paymentTypePda] = getPaymentTypePda(args.paymentTypeName);
                 const [globalConfigPda] = getGlobalConfigPda();
                 const signature = yield program.methods
-                    .setOperation(new anchor.BN(args.paymentType), args.name, args.paymentAmount, args.agentToken)
+                    .setPaymentType(args.paymentTypeName, args.price, args.token)
                     .accountsStrict({
                     globalConfig: globalConfigPda,
-                    operation: operationPda,
+                    paymentType: paymentTypePda,
                     admin: payer,
                     systemProgram: web3_js_1.SystemProgram.programId,
                 })
                     .rpc();
-                return { signature, operationPda };
+                return { signature, paymentTypePda };
             });
         }
         function pay(args) {
             return __awaiter(this, void 0, void 0, function* () {
                 var _a, _b;
-                const { globalConfig } = yield getGlobalConfig();
-                if (!globalConfig)
-                    throw new Error("GlobalConfig not found");
-                const acceptedMint = globalConfig.acceptedMint;
+                const { paymentType: paymentType } = yield getPaymentType(args.paymentTypeName);
+                if (!paymentType)
+                    throw new Error("Payment type not found");
+                const token = paymentType.token;
                 const agentWallet = args.agentWallet;
-                const userToken = (_a = args.userPaymentToken) !== null && _a !== void 0 ? _a : (0, spl_token_1.getAssociatedTokenAddressSync)(acceptedMint, payer);
-                const receiverToken = (_b = args.receiverToken) !== null && _b !== void 0 ? _b : (0, spl_token_1.getAssociatedTokenAddressSync)(acceptedMint, agentWallet, true);
+                const userToken = (_a = args.payerAta) !== null && _a !== void 0 ? _a : (0, spl_token_1.getAssociatedTokenAddressSync)(token, payer);
+                const receiverToken = (_b = args.receiverToken) !== null && _b !== void 0 ? _b : (0, spl_token_1.getAssociatedTokenAddressSync)(token, agentWallet, true);
                 const [globalConfigPda] = getGlobalConfigPda();
-                const [operationPda] = getOperationPda(args.paymentType);
+                const [paymentTypePda] = getPaymentTypePda(args.paymentTypeName);
                 const pid = Buffer.isBuffer(args.paymentId)
                     ? args.paymentId
                     : Buffer.from(args.paymentId);
                 if (pid.length !== 32)
                     throw new Error("paymentId must be exactly 32 bytes");
                 const signature = yield program.methods
-                    .pay(new anchor.BN(args.paymentType), new anchor.BN(args.price), Array.from(pid))
+                    .pay(args.paymentTypeName, new anchor.BN(args.amount), Array.from(pid))
                     .accountsStrict({
                     globalConfig: globalConfigPda,
-                    operation: operationPda,
-                    userPaymentToken: userToken,
+                    paymentType: paymentTypePda,
+                    payerAta: userToken,
                     agentWallet,
-                    receiverToken,
+                    agentAta: receiverToken,
                     payer,
                     tokenProgram: spl_token_1.TOKEN_PROGRAM_ID,
                 })
@@ -140,38 +144,26 @@ exports.default = {
                 }
             });
         }
-        function getOperation(paymentType) {
+        function getPaymentType(paymentTypeName) {
             return __awaiter(this, void 0, void 0, function* () {
-                const [pda] = getOperationPda(paymentType);
+                const [pda] = getPaymentTypePda(paymentTypeName);
                 try {
-                    const data = yield program.account.operation.fetch(pda);
-                    return { operationPda: pda, operation: data };
+                    const data = yield program.account.paymentType.fetch(pda);
+                    return { paymentTypePda: pda, paymentType: data };
                 }
                 catch (_a) {
-                    return { operationPda: pda, operation: null };
+                    return { paymentTypePda: pda, paymentType: null };
                 }
-            });
-        }
-        function getAllOperations() {
-            return __awaiter(this, arguments, void 0, function* (max = 20) {
-                const out = [];
-                for (let i = 0; i < max; i++) {
-                    const { operation } = yield getOperation(i);
-                    if (operation)
-                        out.push({ paymentType: i, data: operation });
-                }
-                return out;
             });
         }
         return {
             getGlobalConfigPda,
-            getOperationPda,
+            getPaymentTypePda,
             initialize,
-            setOperation,
+            setPaymentType,
             pay,
             getGlobalConfig,
-            getOperation,
-            getAllOperations,
+            getPaymentType,
         };
     },
 };

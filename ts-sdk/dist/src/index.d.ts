@@ -18,6 +18,12 @@ declare const _default: {
             accounts: ({
                 name: string;
                 writable: boolean;
+                signer: boolean;
+                pda?: undefined;
+                address?: undefined;
+            } | {
+                name: string;
+                writable: boolean;
                 pda: {
                     seeds: {
                         kind: string;
@@ -28,16 +34,10 @@ declare const _default: {
                 address?: undefined;
             } | {
                 name: string;
-                writable: boolean;
-                signer: boolean;
-                pda?: undefined;
-                address?: undefined;
-            } | {
-                name: string;
                 address: string;
                 writable?: undefined;
-                pda?: undefined;
                 signer?: undefined;
+                pda?: undefined;
             })[];
             args: {
                 name: string;
@@ -48,6 +48,12 @@ declare const _default: {
             docs: string[];
             discriminator: number[];
             accounts: ({
+                name: string;
+                writable: boolean;
+                signer: boolean;
+                pda?: undefined;
+                address?: undefined;
+            } | {
                 name: string;
                 pda: {
                     seeds: ({
@@ -66,27 +72,21 @@ declare const _default: {
             } | {
                 name: string;
                 writable: boolean;
-                pda?: undefined;
                 signer?: undefined;
+                pda?: undefined;
                 address?: undefined;
             } | {
                 name: string;
-                pda?: undefined;
                 writable?: undefined;
                 signer?: undefined;
-                address?: undefined;
-            } | {
-                name: string;
-                writable: boolean;
-                signer: boolean;
                 pda?: undefined;
                 address?: undefined;
             } | {
                 name: string;
                 address: string;
-                pda?: undefined;
                 writable?: undefined;
                 signer?: undefined;
+                pda?: undefined;
             })[];
             args: ({
                 name: string;
@@ -104,6 +104,13 @@ declare const _default: {
             accounts: ({
                 name: string;
                 writable: boolean;
+                signer: boolean;
+                relations: string[];
+                pda?: undefined;
+                address?: undefined;
+            } | {
+                name: string;
+                writable: boolean;
                 pda: {
                     seeds: ({
                         kind: string;
@@ -120,23 +127,21 @@ declare const _default: {
                 address?: undefined;
             } | {
                 name: string;
-                writable: boolean;
-                signer: boolean;
-                relations: string[];
-                pda?: undefined;
-                address?: undefined;
-            } | {
-                name: string;
                 address: string;
                 writable?: undefined;
-                pda?: undefined;
                 signer?: undefined;
                 relations?: undefined;
+                pda?: undefined;
             })[];
-            args: {
+            args: ({
                 name: string;
                 type: string;
-            }[];
+            } | {
+                name: string;
+                type: {
+                    option: string;
+                };
+            })[];
         })[];
         accounts: {
             name: string;
@@ -151,7 +156,7 @@ declare const _default: {
             name: string;
             msg: string;
         }[];
-        types: {
+        types: ({
             name: string;
             type: {
                 kind: string;
@@ -165,34 +170,49 @@ declare const _default: {
                     };
                 })[];
             };
+        } | {
+            name: string;
+            type: {
+                kind: string;
+                fields: ({
+                    name: string;
+                    type: string;
+                } | {
+                    name: string;
+                    type: {
+                        option: string;
+                    };
+                })[];
+            };
+        })[];
+        constants: {
+            name: string;
+            type: string;
+            value: string;
         }[];
     };
     idlType: PaymentProcessor;
     create(provider: anchor.Provider, program: Program<PaymentProcessor>): {
         getGlobalConfigPda: () => [PublicKey, number];
-        getOperationPda: (paymentType: number) => [PublicKey, number];
-        initialize: (args: {
-            acceptedMint: PublicKey;
-            promptPrice: anchor.BN;
-        }) => Promise<{
+        getPaymentTypePda: (paymentType: string) => [PublicKey, number];
+        initialize: (newAdmin: PublicKey) => Promise<{
             signature: string;
             globalConfigPda: PublicKey;
         }>;
-        setOperation: (args: {
-            paymentType: number;
-            name: string;
-            paymentAmount: anchor.BN;
-            agentToken: PublicKey;
+        setPaymentType: (args: {
+            paymentTypeName: string;
+            price: anchor.BN;
+            token: PublicKey;
         }) => Promise<{
             signature: string;
-            operationPda: PublicKey;
+            paymentTypePda: PublicKey;
         }>;
         pay: (args: {
-            paymentType: number;
-            price: anchor.BN | number;
+            paymentTypeName: string;
+            amount: anchor.BN | number;
             agentWallet: PublicKey;
             paymentId: Uint8Array | number[] | Buffer;
-            userPaymentToken?: PublicKey;
+            payerAta?: PublicKey;
             receiverToken?: PublicKey;
         }) => Promise<{
             signature: string;
@@ -201,23 +221,17 @@ declare const _default: {
             globalConfigPda: PublicKey;
             globalConfig: any | null;
         }>;
-        getOperation: (paymentType: number) => Promise<{
-            operationPda: anchor.web3.PublicKey;
-            operation: {
-                paymentType: anchor.BN;
+        getPaymentType: (paymentTypeName: string) => Promise<{
+            paymentTypePda: anchor.web3.PublicKey;
+            paymentType: {
                 name: string;
-                paymentAmount: anchor.BN;
-                agentToken: anchor.web3.PublicKey;
-                bump: number;
+                amount: anchor.BN | null;
+                token: anchor.web3.PublicKey;
             };
         } | {
-            operationPda: anchor.web3.PublicKey;
-            operation: null;
+            paymentTypePda: anchor.web3.PublicKey;
+            paymentType: null;
         }>;
-        getAllOperations: (max?: number) => Promise<{
-            paymentType: number;
-            data: any;
-        }[]>;
     };
 };
 export default _default;
@@ -238,6 +252,12 @@ export declare const xyberPaymentProcessorSdk: {
             accounts: ({
                 name: string;
                 writable: boolean;
+                signer: boolean;
+                pda?: undefined;
+                address?: undefined;
+            } | {
+                name: string;
+                writable: boolean;
                 pda: {
                     seeds: {
                         kind: string;
@@ -248,16 +268,10 @@ export declare const xyberPaymentProcessorSdk: {
                 address?: undefined;
             } | {
                 name: string;
-                writable: boolean;
-                signer: boolean;
-                pda?: undefined;
-                address?: undefined;
-            } | {
-                name: string;
                 address: string;
                 writable?: undefined;
-                pda?: undefined;
                 signer?: undefined;
+                pda?: undefined;
             })[];
             args: {
                 name: string;
@@ -268,6 +282,12 @@ export declare const xyberPaymentProcessorSdk: {
             docs: string[];
             discriminator: number[];
             accounts: ({
+                name: string;
+                writable: boolean;
+                signer: boolean;
+                pda?: undefined;
+                address?: undefined;
+            } | {
                 name: string;
                 pda: {
                     seeds: ({
@@ -286,27 +306,21 @@ export declare const xyberPaymentProcessorSdk: {
             } | {
                 name: string;
                 writable: boolean;
-                pda?: undefined;
                 signer?: undefined;
+                pda?: undefined;
                 address?: undefined;
             } | {
                 name: string;
-                pda?: undefined;
                 writable?: undefined;
                 signer?: undefined;
-                address?: undefined;
-            } | {
-                name: string;
-                writable: boolean;
-                signer: boolean;
                 pda?: undefined;
                 address?: undefined;
             } | {
                 name: string;
                 address: string;
-                pda?: undefined;
                 writable?: undefined;
                 signer?: undefined;
+                pda?: undefined;
             })[];
             args: ({
                 name: string;
@@ -324,6 +338,13 @@ export declare const xyberPaymentProcessorSdk: {
             accounts: ({
                 name: string;
                 writable: boolean;
+                signer: boolean;
+                relations: string[];
+                pda?: undefined;
+                address?: undefined;
+            } | {
+                name: string;
+                writable: boolean;
                 pda: {
                     seeds: ({
                         kind: string;
@@ -340,23 +361,21 @@ export declare const xyberPaymentProcessorSdk: {
                 address?: undefined;
             } | {
                 name: string;
-                writable: boolean;
-                signer: boolean;
-                relations: string[];
-                pda?: undefined;
-                address?: undefined;
-            } | {
-                name: string;
                 address: string;
                 writable?: undefined;
-                pda?: undefined;
                 signer?: undefined;
                 relations?: undefined;
+                pda?: undefined;
             })[];
-            args: {
+            args: ({
                 name: string;
                 type: string;
-            }[];
+            } | {
+                name: string;
+                type: {
+                    option: string;
+                };
+            })[];
         })[];
         accounts: {
             name: string;
@@ -371,7 +390,7 @@ export declare const xyberPaymentProcessorSdk: {
             name: string;
             msg: string;
         }[];
-        types: {
+        types: ({
             name: string;
             type: {
                 kind: string;
@@ -385,6 +404,25 @@ export declare const xyberPaymentProcessorSdk: {
                     };
                 })[];
             };
+        } | {
+            name: string;
+            type: {
+                kind: string;
+                fields: ({
+                    name: string;
+                    type: string;
+                } | {
+                    name: string;
+                    type: {
+                        option: string;
+                    };
+                })[];
+            };
+        })[];
+        constants: {
+            name: string;
+            type: string;
+            value: string;
         }[];
     };
     idlType: PaymentProcessor;
